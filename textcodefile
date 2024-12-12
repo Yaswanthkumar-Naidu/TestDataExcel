@@ -1,0 +1,25 @@
+public void fluentWait(WebDriver drivernew, WebElement element) {
+    try {
+        Wait<WebDriver> wait2 = new FluentWait<WebDriver>(drivernew)
+                .withTimeout(Duration.ofMinutes(2))      // Set maximum timeout to 2 minutes
+                .pollingEvery(Duration.ofSeconds(2))     // Check every 2 seconds
+                .ignoring(NoSuchElementException.class)
+                .ignoring(StaleElementReferenceException.class)
+                .ignoring(ElementNotVisibleException.class)
+                .withMessage("Element not visible after 2 minutes timeout");
+
+        wait2.until(driver -> {
+            try {
+                if (element.isDisplayed()) {
+                    return element;
+                }
+                return null;
+            } catch (Exception e) {
+                return null;
+            }
+        });
+    } catch (TimeoutException e) {
+        logger.error("Element not found within 2 minutes: " + e.getMessage());
+        throw e; // Rethrowing to ensure test failure
+    }
+}
