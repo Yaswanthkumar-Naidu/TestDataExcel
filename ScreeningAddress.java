@@ -74,7 +74,7 @@ public class ScreeningAddress {
 	@FindBy(how = How.XPATH, using = "//p[text()='Screening Address ID']")
 	public WebElement scrAddressIDHeader;
 	
-	//h1[text()='Screening Addresses']
+
 	
 	public void navigateToScreeningAddresses(TestCaseParam testCaseParam, String scriptIteration, String pomIteration)throws CustomException  {
 		PageDetails action = new PageDetails();
@@ -199,8 +199,5 @@ public class ScreeningAddress {
 				logger.error("Failed == {} ", action.getPageActionDescription());
 				exceptionDetails.logExceptionDetails(driver, testCaseParam, action.getPageActionName(), action.getPageActionDescription(), startTime,e);
 		  } 
-
 	}
-
-
 }
