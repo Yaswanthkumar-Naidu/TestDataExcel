@@ -62,7 +62,7 @@ public class ScreeningValidatePerson {
 	public WebElement clickScreeningIDLink;
 	
 	@FindBy(how = How.XPATH, using = "//*[@title='Validated Person Name']/..//following::p//slot//descendant::slot//span//slot")
-	public WebElement  validatePersonName;
+	public WebElement  validatedPersonName;
 	
 	@FindBy(how = How.XPATH, using = "//span[text()='View All']//parent::a")
 	public WebElement viewAllButton;
@@ -74,6 +74,8 @@ public class ScreeningValidatePerson {
 	public WebElement ScreeningPersonTitle;
 	
     String scrPersonLink = "(//slot[text()='%s']/../../..//parent::a)[2]";
+    
+    String validatedPerson = "//a[@title='%s']";
 	
 	//Pass Screening Person Id that is saved in SalesforceConstant in the format SCP_ID+screenIterationNum
 	public void validatePersonDetails(TestCaseParam testCaseParam,String scriptIteration, String pomIteration) throws CustomException  {
@@ -174,8 +176,22 @@ public class ScreeningValidatePerson {
 			exceptionDetails.logExceptionDetails(driver, testCaseParam, action.getPageActionName(), action.getPageActionDescription(), startTime,e);
 		}
 	}
-	
-	public void validatePersonNonEditable(TestCaseParam testCaseParam,String scriptIteration, String pomIteration) throws CustomException  {
+
+	public void navigateToValidatedPerson(TestCaseParam testCaseParam,String scriptIteration, String pomIteration)throws CustomException  {
+	PageDetails action = new PageDetails();
+	action.setPageActionName("Navigate to Validated Person");
+	action.setPageActionDescription("Navigate to Validated Person");
+	try {
+		Map<String, ArrayList<String>>	testCaseDataSd = util.getScreenTCData(screenName, TestRunSettings.getTestNGTestMethodName(),TestRunSettings.getTestDataPath(), TestRunSettings.getTestDataMappingFileName() ,TestRunSettings.getTestDataMappingSheetNameSd(),scriptIteration,pomIteration);
+		Webkeywords.instance().click(driver,  driver.findElement(By.xpath(format(validatedPerson,SalesforceConstants.getConstantValue("personName"+pomIteration)))), testCaseDataSd.get("VALIDATEPERSON_TAB").get(0), testCaseParam,action);
+	}catch (Exception e) {
+		logger.error(FAILURE_MSG, action.getPageActionDescription());
+		exceptionDetails.logExceptionDetails(driver, testCaseParam, action.getPageActionName(), action.getPageActionDescription(), startTime,e);
+	}	
+
+	}
+
+public void validatePersonNonEditable(TestCaseParam testCaseParam,String scriptIteration, String pomIteration) throws CustomException  {
 		PageDetails action = new PageDetails();
 		action.setPageActionName("Validate Screening Person Non Editable");
 		action.setPageActionDescription("Validate Screening Person Non Editable");
@@ -200,5 +216,4 @@ public class ScreeningValidatePerson {
 				exceptionDetails.logExceptionDetails(driver, testCaseParam, action.getPageActionName(), action.getPageActionDescription(), startTime,e);
 		}
 	}
-	
 }
