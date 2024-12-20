@@ -27,6 +27,8 @@ import reportutilities.common.ReportCommon;
 import reportutilities.extentmodel.PageDetails;
 import reportutilities.model.TestCaseParam;
 import testsettings.TestRunSettings;
+import uitests.testng.common.CommonOperations;
+
 import static java.lang.String.format;
 
 public class ScreeningPerson {
@@ -101,7 +103,7 @@ public class ScreeningPerson {
 			Webkeywords.instance().selectValueInputDropdown(driver,role,"Role",testCaseParam,action);
 			Webkeywords.instance().setText(driver, genericLocators.textbox(driver, "First Name",testCaseDataSd.get("PERSON_FIRSTNAME").get(0)),fname, testCaseParam, action);
 			Webkeywords.instance().setText(driver, genericLocators.textbox(driver, "Last Name",testCaseDataSd.get("PERSON_LASTNAME").get(0)), lname, testCaseParam, action);
-
+			Webkeywords.instance().setDateText(driver, dateOfBirth, CommonOperations.getDate("M/d/yyyy", testCaseDataSd.get("DATE_OF_BIRTH").get(0)), testCaseParam, action);
 			Webkeywords.instance().click(driver, genericLocators.button(driver, "Save",testCaseDataSd.get("SAVE_BTN").get(0)), testCaseDataSd.get("SAVE_BTN").get(0), testCaseParam, action);
 
 			WebElement screeningPersonId =  driver.findElement(By.xpath(format(screeningPersonID,role,lname,fname)));
@@ -109,8 +111,8 @@ public class ScreeningPerson {
 			
 			SalesforceConstants.setConstantValue("SCP_ID"+pomIteration, screeningPersonId.getText());
 			SalesforceConstants.setConstantValue("personName"+pomIteration, fname+" "+lname);
-			//Webkeywords.instance().waitElementToBeVisible(driver, informationSection);
-			
+					
+
 		}catch (Exception e) {
 			logger.error("Failed == {} ", action.getPageActionDescription());
 			exceptionDetails.logExceptionDetails(driver, testCaseParam, action.getPageActionName(), action.getPageActionDescription(), startTime,e);
