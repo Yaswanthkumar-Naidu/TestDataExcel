@@ -48,6 +48,12 @@ public class SupervisorReviewPromotion {
 	@FindBy(xpath = "//*[text()='Folio Ref.']/..//a/span")
 	WebElement folioRefID;
 	
+	@FindBy(how = How.XPATH, using = "//input[contains(@aria-label, 'Office')]")
+	public WebElement officeDD;
+	
+	@FindBy(how = How.XPATH, using = "//input[contains(@aria-label, 'Unit')]")
+	public WebElement unitDD;
+	
 	public SupervisorReviewPromotion(){ }
 	
 	public SupervisorReviewPromotion(WebDriver wDriver,TestCaseParam testCaseParam)
@@ -142,6 +148,17 @@ public class SupervisorReviewPromotion {
 				 primaryWorker = SalesforceConstants.getUserName(testCaseDataSd.get("PRIMARY_WORKER").get(0));
 			else
 				 primaryWorker = testCaseDataSd.get("PRIMARY_WORKER").get(0);
+			
+			Webkeywords.instance().selectValueInputDropdown(driver,testCaseDataSd.get("COUNTY").get(0),"County",testCaseParam,action);	
+
+			Webkeywords.instance().click(driver, officeDD,testCaseDataSd.get("OFFICE").get(0), testCaseParam,action);
+			Webkeywords.instance().setText(driver, genericLocators.textbox(driver, "Office",testCaseDataSd.get("OFFICE").get(0)),testCaseDataSd.get("OFFICE").get(0), testCaseParam, action);
+			Webkeywords.instance().click(driver, genericLocators.link(driver, testCaseDataSd.get("OFFICE").get(0),testCaseDataSd.get("OFFICE").get(0)), testCaseDataSd.get("OFFICE").get(0), testCaseParam,action);
+			
+			Webkeywords.instance().click(driver, unitDD,testCaseDataSd.get("UNIT").get(0), testCaseParam,action);
+			Webkeywords.instance().setText(driver, genericLocators.textbox(driver, "Unit",testCaseDataSd.get("UNIT").get(0)),testCaseDataSd.get("UNIT").get(0), testCaseParam, action);
+			Webkeywords.instance().click(driver, genericLocators.link(driver, testCaseDataSd.get("UNIT").get(0),testCaseDataSd.get("UNIT").get(0)), testCaseDataSd.get("UNIT").get(0), testCaseParam,action);
+
 			Webkeywords.instance().click(driver, primaryWorkerDD,primaryWorkerTD, testCaseParam,action);
 			Webkeywords.instance().click(driver, genericLocators.link(driver, primaryWorker,primaryWorkerTD), primaryWorkerTD, testCaseParam,action);
 		
@@ -149,6 +166,7 @@ public class SupervisorReviewPromotion {
 			SalesforceCommon.verifyToastMessage(driver,testCaseDataSd.get("TOAST_MSG_VERIFY").get(0),testCaseParam, action);
 			Webkeywords.instance().scrollUpPageToTheTop(driver);
 			Webkeywords.instance().refresh(driver, testCaseParam, action);
+			Webkeywords.instance().waitElementToBeVisible(driver,folioRefID );
 		   	Webkeywords.instance().verifyElementDisplayed(driver, folioRefID, testCaseDataSd.get("FOLIOREF_ID_VERIFY").get(0), testCaseParam, action);
 			SalesforceConstants.setConstantValue("FOLIO ID", folioRefID.getText());
 			SalesforceCommon.captureRecordURL(driver,"FOLIO");  
