@@ -58,3 +58,15 @@ public void click(WebDriver drivernew, WebElement element, String testData, Test
         }
     }
 }
+
+===================
+
+String [] hlWorker = {"AutoTitleIV_Placement_State_V1SIT@osi.ca.gov","Cares@401347563679012"};
+		loginMap.put("TitleIVStaffCDSSPlacement", hlWorker);
+		String [] dlPlacer = {"Auto_TitleIV_Staff_Placer@osi.ca.gov","Cares@401347563625"};
+		loginMap.put("TitleIVStaffPlacer", dlPlacer);
+		String [] hlWorker1 = {"Auto_Hstaff1_ContraCosta_V1_SIT@nomail.ca.gov","Cares@401347563793981"};
+		loginMap.put("HLWorkerContraCosta", hlWorker1);
+        String [] hlSup = {"Auto_Hsupervisor1_ContraCosta_V1_SIT@nomail.ca.gov","Cares@401347563793981"};
+		loginMap.put("HLSupervisorContraCosta", hlSup);
+
