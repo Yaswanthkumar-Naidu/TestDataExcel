@@ -1,7 +1,60 @@
-public static WebElement replaceValue(WebDriver driver,String fieldname, String fieldvalue, WebElement we) {
-		String value;
-		value = we.toString().replace("%s", fieldname);
-		 value = value.replace("%v", fieldvalue);
-		return driver.findElement(By.xpath(value));
-	}
-	
+public void click(WebDriver drivernew, WebElement element, String testData, TestCaseParam testCaseParam, PageDetails pageDetails) throws CustomException {
+    if (!(testData.equalsIgnoreCase("n/a")) && !(testData.equalsIgnoreCase("n\\a")) && !(testData.equalsIgnoreCase(TESTDATA_NOT_APPLICABLE))) {
+        String actionDescription = element.toString();
+        LocalDateTime startTime = LocalDateTime.now();
+        String action = CLICK_ACTION_PREFIX + getLocatorFromWebElement(element, drivernew, testCaseParam, pageDetails);
+        WebDriverWait wait = new WebDriverWait(drivernew, TIME_OUT);
+        
+        int maxAttempts = 3;
+        int attempts = 0;
+        boolean clickSuccessful = false;
+        
+        while (attempts < maxAttempts && !clickSuccessful) {
+            try {
+                Webkeywords.instance().fluentWait(drivernew, element);
+                Actions actionnew = new Actions(drivernew);
+                actionnew.moveToElement(element).build().perform();
+                element.click();
+                waitTillPageLoad(wait);
+                testStepDetails.logTestStepDetails(drivernew, testCaseParam, action, actionDescription, pageDetails, startTime, STATUSDONE);
+                Thread.sleep(900);
+                clickSuccessful = true;
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break; // Exit the loop if thread is interrupted
+            } catch (Exception e) {
+                attempts++;
+                if (attempts < maxAttempts) {
+                    try {
+                        // Wait before retry
+                        Thread.sleep(2000);
+                        logger.info("Retry attempt " + attempts + " of " + maxAttempts);
+                        
+                        // Try JavaScript click as fallback
+                        Webkeywords.instance().waitElementforelementclickable(drivernew, element, 1000);
+                        JavascriptExecutor executor = (JavascriptExecutor) drivernew;
+                        executor.executeScript("arguments[0].scrollIntoView(true);", element);
+                        Thread.sleep(300);
+                        executor.executeScript("arguments[0].click();", element);
+                        waitTillPageLoad(wait);
+                        testStepDetails.logTestStepDetails(drivernew, testCaseParam, action, actionDescription, pageDetails, startTime, STATUSDONE);
+                        clickSuccessful = true;
+                        
+                    } catch (InterruptedException f) {
+                        Thread.currentThread().interrupt();
+                        break; // Exit the loop if thread is interrupted
+                    } catch (Exception f) {
+                        logger.error("Attempt " + attempts + " failed: " + f.getMessage());
+                        // Continue to next iteration if we haven't reached max attempts
+                    }
+                } else {
+                    // All attempts failed
+                    logger.error(LOG_FAILED_FORMAT, action, actionDescription);
+                    testStepDetails.logExceptionDetails(drivernew, testCaseParam, action, actionDescription, startTime, strigToException(getActionDescription(action, actionDescription)));
+                    testStepDetails.logTestStepDetails(drivernew, testCaseParam, action, actionDescription, pageDetails, startTime, STATUSFAIL);
+                    throw new CustomException("Failed to click element after " + maxAttempts + " attempts. Last error: " + e.getMessage());
+                }
+            }
+        }
+    }
+}
