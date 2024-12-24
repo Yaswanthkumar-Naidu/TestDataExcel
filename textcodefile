@@ -130,4 +130,45 @@ public void setText(WebDriver drivernew, WebElement element1, String text1, Test
 				retryCount++;
             }
         }
+}}
+===============
+public void jsClick(WebDriver driver, WebElement element) throws CustomException {
+    JavascriptExecutor js = (JavascriptExecutor)driver;
+    int maxRetries = 3;
+    int retryCount = 0;
+    Exception lastException = null;
+
+    while (retryCount < maxRetries) {
+        try {
+            // Wait for element to be clickable
+            WebDriverWait wait = new WebDriverWait(driver, 10);
+            wait.until(ExpectedConditions.elementToBeClickable(element));
+            
+            // Perform the click
+            js.executeScript("arguments[0].click();", element);
+            
+            // If successful, return from the method
+            logger.info("Successfully clicked element using JavaScript");
+            return;
+            
+        } catch (Exception e) {
+            lastException = e;
+            retryCount++;
+            
+            if (retryCount < maxRetries) {
+                // Calculate delay with exponential backoff
+                int delay = 1000 * retryCount;
+                logger.warn("Click attempt {} failed. Retrying in {} ms. Error: {}", 
+                    retryCount, delay, e.getMessage());
+                
+                try {
+                    Thread.sleep(delay);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new CustomException("Retry interrupted: " + ie.getMessage());
+                }
+            }
+        }
+    }
+==========
 
