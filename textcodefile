@@ -70,3 +70,64 @@ String [] hlWorker = {"AutoTitleIV_Placement_State_V1SIT@osi.ca.gov","Cares@4013
         String [] hlSup = {"Auto_Hsupervisor1_ContraCosta_V1_SIT@nomail.ca.gov","Cares@401347563793981"};
 		loginMap.put("HLSupervisorContraCosta", hlSup);
 
+====================
+
+public void setText(WebDriver drivernew, WebElement element1, String text1, TestCaseParam testCaseParam, PageDetails pageDetails) throws CustomException {
+    if (!(text1.equalsIgnoreCase("n/a")) && !(text1.equalsIgnoreCase("n\\a")) && !(text1.equalsIgnoreCase(TESTDATA_NOT_APPLICABLE))) {
+        String action = ENTERED_TEXT + text1;
+        String actionDescription = ENTERED_TEXT + text1;
+        String password = "*".repeat(text1.length());
+        LocalDateTime startTime = LocalDateTime.now();
+        
+        int maxRetries = 3;  // Maximum number of retry attempts
+        int retryCount = 0;
+        boolean success = false;
+        Exception lastException = null;
+
+        while (!success && retryCount < maxRetries) {
+            try {
+                if (!textCheck(text1)) {
+                    Webkeywords.instance().fluentWait(drivernew, element1);
+                    WebDriverWait wait1 = new WebDriverWait(drivernew, 1000);
+                    wait1.until(ExpectedConditions.elementToBeClickable(element1));
+                    element1.clear();
+                    element1.sendKeys(text1);
+                    
+                    boolean isDataFilled1 = false;
+                    while (!isDataFilled1) {
+                        String textBoxValue = element1.getAttribute(VALUE);
+                        String textBoxtest = element1.getText();
+                        isDataFilled1 = validateTextBoxValue(drivernew, element1, text1, isDataFilled1, textBoxValue,
+                                textBoxtest);
+                    }
+
+                    if (element1.getAttribute("type").equals("password")) {
+                        logger.info("Successfully entered Password : {}", password);
+                        testStepDetails.logTestStepDetails(drivernew, testCaseParam, "Entered Password -> " + password,
+                                "Entered Password -> " + password, pageDetails, startTime, STATUSDONE);
+                    } else {
+                        logger.info(SUCCESSFULLY_ENTERED_TEXT, text1, element1);
+                        testStepDetails.logTestStepDetails(drivernew, testCaseParam, action,
+                                getActionDescription(action, actionDescription), pageDetails, startTime, STATUSDONE);
+                    }
+
+                    success = true;  // If we reach here without exception, operation was successful
+                }
+                
+            } catch (Exception e) {
+                lastException = e;
+                
+                if (retryCount < maxRetries) {
+                    logger.warn("Attempt {} failed. Retrying... Error: {}", retryCount, e.getMessage());
+                    try {
+                        // Exponential backoff: wait longer between each retry
+                        Thread.sleep(1000 * retryCount);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        throw new CustomException("Retry interrupted: " + ie.getMessage());
+                    }
+                }
+				retryCount++;
+            }
+        }
+
