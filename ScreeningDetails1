@@ -1,0 +1,114 @@
+{
+    "title": "ScreeningDetails",
+    "steps": [
+        {
+            "type": "navigate",
+            "url": "https://cacwds--v1sit.sandbox.lightning.force.com/lightning/o/Screening__c/new?inContextOfRef=1.eyJ0eXBlIjoic3RhbmRhcmRfX29iamVjdFBhZ2UiLCJhdHRyaWJ1dGVzIjp7Im9iamVjdEFwaU5hbWUiOiJTY3JlZW5pbmdfX2MiLCJhY3Rpb25OYW1lIjoibGlzdCJ9LCJzdGF0ZSI6eyJmaWx0ZXJOYW1lIjoiX19SZWNlbnQifX0%3D&count=1",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://cacwds--v1sit.sandbox.lightning.force.com/lightning/o/Screening__c/new?inContextOfRef=1.eyJ0eXBlIjoic3RhbmRhcmRfX29iamVjdFBhZ2UiLCJhdHRyaWJ1dGVzIjp7Im9iamVjdEFwaU5hbWUiOiJTY3JlZW5pbmdfX2MiLCJhY3Rpb25OYW1lIjoibGlzdCJ9LCJzdGF0ZSI6eyJmaWx0ZXJOYW1lIjoiX19SZWNlbnQifX0%3D&count=1",
+                    "title": "New Screening | Salesforce"
+                }
+            ]
+        },
+        {
+            "type": "change",
+            "target": "Narrative",
+            "selectors": [
+                "div.ql-editor",
+                "xpath///*[@id=\"173581243322852-2029\"]/slot/div/div/div[1]/div/c-kreator-input-rich-text-area/lightning-input-rich-text/div/div/div/div[2]/div[1]"
+            ],
+            "value": "Narrative"
+        },
+        {
+            "type": "click",
+            "target": "DateClick",
+            "selectors": [
+                "#input-2069",
+                "xpath///*[@id=\"input-2069\"]"
+            ],
+            "offsetX": 227.40969848632812,
+            "offsetY": 12.5555419921875
+        },
+        {
+            "type": "click",
+            "target": "DateToday",
+            "selectors": [
+                "td.slds-is-today > span",
+                "xpath///*[@id=\"173581243322852-2029\"]/slot/div/div/div[3]/div/div/div[1]/div[1]/c-kreator-input-date-time/lightning-input/lightning-datetimepicker/div/fieldset/div[1]/div/div/lightning-datepicker/div[1]/div/lightning-calendar/div/lightning-focus-trap/slot/table/tbody/tr[1]/td[5]/span"
+            ],
+            "offsetX": 13.08331298828125,
+            "offsetY": 12.388885498046875
+        },
+        {
+            "type": "click",
+            "target": "RFCDD",
+            "selectors": [
+                "#combobox-button-2078",
+                "xpath///*[@id=\"combobox-button-2078\"]"
+            ],
+            "offsetX": 68.7291259765625,
+            "offsetY": 10.5555419921875
+        },
+        {
+            "type": "click",
+            "target": "RFCDDValue",
+            "selectors": [
+                "#combobox-button-2078-1-2078 > span.slds-media__body > span",
+                "xpath///*[@id=\"combobox-button-2078-1-2078\"]/span[2]/span"
+            ],
+            "offsetX": 38.53466796875,
+            "offsetY": 6.041656494140625
+        },
+        {
+            "type": "change",
+            "target": "ScreeningName",
+            "selectors": [
+                "#input-2086",
+                "xpath///*[@id=\"input-2086\"]"
+            ],
+            "value": "SC001"
+        },
+        {
+            "type": "click",
+            "target": "CallerType",
+            "selectors": [
+                "span:nth-of-type(3) span.slds-radio_faux",
+                "xpath///*[@id=\"173581243323486-2091\"]/slot/div/div/div[1]/div/c-kreator-input-selection-radio/lightning-radio-group/fieldset/div/span[3]/label/span[1]"
+            ],
+            "offsetX": 3.1041259765625,
+            "offsetY": 5.315948486328125
+        },
+        {
+            "type": "click",
+            "target": "CBReqDD",
+            "selectors": [
+                "#combobox-button-2227",
+                "xpath///*[@id=\"combobox-button-2227\"]"
+            ],
+            "offsetX": 101.7291259765625,
+            "offsetY": 13.770828247070312
+        },
+        {
+            "type": "click",
+            "target": "CBreqDDValue",
+            "selectors": [
+                "#combobox-button-2227-2-2227 > span.slds-media__body",
+                "xpath///*[@id=\"combobox-button-2227-2-2227\"]/span[2]"
+            ],
+            "offsetX": 56.53466796875,
+            "offsetY": 7.74652099609375
+        },
+        {
+            "type": "click",
+            "target": "SaveBtn",
+            "selectors": [
+                "div:nth-of-type(5) > div > div > div div > div",
+                "xpath///*[@id=\"brandBand_2\"]/div/div/div/div/div[2]/span/c-cares_-generic-l-w-c-container/c-cares_screening-intake-details-flow/div/div/div/div[5]/div/div/div/c-kreator-action-buttons/button/div/div"
+            ],
+            "offsetX": 31.59716796875,
+            "offsetY": 20.87152099609375
+        }
+    ]
+}
