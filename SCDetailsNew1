@@ -1,0 +1,104 @@
+{
+    "title": "SCDetails",
+    "steps": [
+        {
+            "type": "navigate",
+            "url": "https://cacwds--v1sit.sandbox.lightning.force.com/lightning/o/Screening__c/new?inContextOfRef=1.eyJ0eXBlIjoic3RhbmRhcmRfX29iamVjdFBhZ2UiLCJhdHRyaWJ1dGVzIjp7Im9iamVjdEFwaU5hbWUiOiJTY3JlZW5pbmdfX2MiLCJhY3Rpb25OYW1lIjoibGlzdCJ9LCJzdGF0ZSI6eyJmaWx0ZXJOYW1lIjoiX19SZWNlbnQifX0%3D&count=3",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://cacwds--v1sit.sandbox.lightning.force.com/lightning/o/Screening__c/new?inContextOfRef=1.eyJ0eXBlIjoic3RhbmRhcmRfX29iamVjdFBhZ2UiLCJhdHRyaWJ1dGVzIjp7Im9iamVjdEFwaU5hbWUiOiJTY3JlZW5pbmdfX2MiLCJhY3Rpb25OYW1lIjoibGlzdCJ9LCJzdGF0ZSI6eyJmaWx0ZXJOYW1lIjoiX19SZWNlbnQifX0%3D&count=3",
+                    "title": "New Screening | Salesforce"
+                }
+            ]
+        },
+        {
+            "type": "change",
+            "target": "narrative",
+            "selectors": [
+                "xpath///*[@id=\"173589001766660-1062\"]/slot/div/div/div[1]/div/c-kreator-input-rich-text-area/lightning-input-rich-text/div/div/div/div[2]/div[1]"
+            ],
+            "value": "NarrativeText"
+        },
+        {
+            "type": "click",
+            "target": "datetime",
+            "selectors": [
+                "xpath///*[@id=\"input-1102\"]"
+            ],
+            "offsetX": 226.40969848632812,
+            "offsetY": 15.5555419921875
+        },
+        {
+            "type": "click",
+            "target": "dateToday",
+            "selectors": [
+                "xpath///*[@id=\"173589001766660-1062\"]/slot/div/div/div[3]/div/div/div[1]/div[1]/c-kreator-input-date-time/lightning-input/lightning-datetimepicker/div/fieldset/div[1]/div/div/lightning-datepicker/div[1]/div/lightning-calendar/div/lightning-focus-trap/slot/button"
+            ],
+            "offsetX": 12.017333984375,
+            "offsetY": 13.486083984375
+        },
+        {
+            "type": "click",
+            "target": "RFCdd",
+            "selectors": [
+                "xpath///*[@id=\"combobox-button-1111\"]"
+            ],
+            "offsetX": 106.7291259765625,
+            "offsetY": 16.5555419921875
+        },
+        {
+            "type": "click",
+            "target": "RFDddValue",
+            "selectors": [
+                "xpath///*[@id=\"combobox-button-1111-1-1111\"]/span[2]/span"
+            ],
+            "offsetX": 40.53466796875,
+            "offsetY": 6.041656494140625
+        },
+        {
+            "type": "change",
+            "target": "scName",
+            "selectors": [
+                "xpath///*[@id=\"input-1119\"]"
+            ],
+            "value": "scname01"
+        },
+        {
+            "type": "click",
+            "target": "callerType",
+            "selectors": [
+                "xpath///*[@id=\"1735890017691233-1124\"]/slot/div/div/div[1]/div/c-kreator-input-selection-radio/lightning-radio-group/fieldset/div/span[3]/label/span[1]"
+            ],
+            "offsetX": 5.1041259765625,
+            "offsetY": 4.315948486328125
+        },
+        {
+            "type": "click",
+            "target": "callbackReqDD",
+            "selectors": [
+                "xpath///*[@id=\"combobox-button-1260\"]"
+            ],
+            "offsetX": 125.7291259765625,
+            "offsetY": 14.437484741210938
+        },
+        {
+            "type": "click",
+            "target": "CBRddVal",
+            "selectors": [
+                "xpath///*[@id=\"combobox-button-1260-2-1260\"]/span[2]"
+            ],
+            "offsetX": 54.53466796875,
+            "offsetY": 5.40277099609375
+        },
+        {
+            "type": "click",
+            "target": "save",
+            "selectors": [
+                "xpath///*[@id=\"brandBand_5\"]/div/div/div/div/div[2]/span/c-cares_-generic-l-w-c-container/c-cares_screening-intake-details-flow/div/div/div/div[5]/div/div/div/c-kreator-action-buttons/button/div/div"
+            ],
+            "offsetX": 20.59716796875,
+            "offsetY": 8.87152099609375
+        }
+    ]
+}
