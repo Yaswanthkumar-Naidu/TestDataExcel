@@ -1,174 +1,83 @@
-public void click(WebDriver drivernew, WebElement element, String testData, TestCaseParam testCaseParam, PageDetails pageDetails) throws CustomException {
-    if (!(testData.equalsIgnoreCase("n/a")) && !(testData.equalsIgnoreCase("n\\a")) && !(testData.equalsIgnoreCase(TESTDATA_NOT_APPLICABLE))) {
-        String actionDescription = element.toString();
-        LocalDateTime startTime = LocalDateTime.now();
-        String action = CLICK_ACTION_PREFIX + getLocatorFromWebElement(element, drivernew, testCaseParam, pageDetails);
-        WebDriverWait wait = new WebDriverWait(drivernew, TIME_OUT);
-        
-        int maxAttempts = 3;
-        int attempts = 0;
-        boolean clickSuccessful = false;
-        
-        while (attempts < maxAttempts && !clickSuccessful) {
-            try {
-                Webkeywords.instance().fluentWait(drivernew, element);
-                Actions actionnew = new Actions(drivernew);
-                actionnew.moveToElement(element).build().perform();
-                element.click();
-                waitTillPageLoad(wait);
-                testStepDetails.logTestStepDetails(drivernew, testCaseParam, action, actionDescription, pageDetails, startTime, STATUSDONE);
-                Thread.sleep(900);
-                clickSuccessful = true;
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break; // Exit the loop if thread is interrupted
-            } catch (Exception e) {
-                attempts++;
-                if (attempts < maxAttempts) {
-                    try {
-                        // Wait before retry
-                        Thread.sleep(2000);
-                        logger.info("Retry attempt " + attempts + " of " + maxAttempts);
-                        
-                        // Try JavaScript click as fallback
-                        Webkeywords.instance().waitElementforelementclickable(drivernew, element, 1000);
-                        JavascriptExecutor executor = (JavascriptExecutor) drivernew;
-                        executor.executeScript("arguments[0].scrollIntoView(true);", element);
-                        Thread.sleep(300);
-                        executor.executeScript("arguments[0].click();", element);
-                        waitTillPageLoad(wait);
-                        testStepDetails.logTestStepDetails(drivernew, testCaseParam, action, actionDescription, pageDetails, startTime, STATUSDONE);
-                        clickSuccessful = true;
-                        
-                    } catch (InterruptedException f) {
-                        Thread.currentThread().interrupt();
-                        break; // Exit the loop if thread is interrupted
-                    } catch (Exception f) {
-                        logger.error("Attempt " + attempts + " failed: " + f.getMessage());
-                        // Continue to next iteration if we haven't reached max attempts
-                    }
-                } else {
-                    // All attempts failed
-                    logger.error(LOG_FAILED_FORMAT, action, actionDescription);
-                    testStepDetails.logExceptionDetails(drivernew, testCaseParam, action, actionDescription, startTime, strigToException(getActionDescription(action, actionDescription)));
-                    testStepDetails.logTestStepDetails(drivernew, testCaseParam, action, actionDescription, pageDetails, startTime, STATUSFAIL);
-                    throw new CustomException("Failed to click element after " + maxAttempts + " attempts. Last error: " + e.getMessage());
-                }
-            }
-        }
-    }
-}
 
-===================
-
-String [] hlWorker = {"AutoTitleIV_Placement_State_V1SIT@osi.ca.gov","Cares@401347563679012"};
-		loginMap.put("TitleIVStaffCDSSPlacement", hlWorker);
-		String [] dlPlacer = {"Auto_TitleIV_Staff_Placer@osi.ca.gov","Cares@401347563625"};
-		loginMap.put("TitleIVStaffPlacer", dlPlacer);
-		String [] hlWorker1 = {"Auto_Hstaff1_ContraCosta_V1_SIT@nomail.ca.gov","Cares@401347563793981"};
-		loginMap.put("HLWorkerContraCosta", hlWorker1);
-        String [] hlSup = {"Auto_Hsupervisor1_ContraCosta_V1_SIT@nomail.ca.gov","Cares@401347563793981"};
-		loginMap.put("HLSupervisorContraCosta", hlSup);
-
-====================
-
-public void setText(WebDriver drivernew, WebElement element1, String text1, TestCaseParam testCaseParam, PageDetails pageDetails) throws CustomException {
-    if (!(text1.equalsIgnoreCase("n/a")) && !(text1.equalsIgnoreCase("n\\a")) && !(text1.equalsIgnoreCase(TESTDATA_NOT_APPLICABLE))) {
-        String action = ENTERED_TEXT + text1;
-        String actionDescription = ENTERED_TEXT + text1;
-        String password = "*".repeat(text1.length());
-        LocalDateTime startTime = LocalDateTime.now();
-        
-        int maxRetries = 3;  // Maximum number of retry attempts
-        int retryCount = 0;
-        boolean success = false;
-        Exception lastException = null;
-
-        while (!success && retryCount < maxRetries) {
-            try {
-                if (!textCheck(text1)) {
-                    Webkeywords.instance().fluentWait(drivernew, element1);
-                    WebDriverWait wait1 = new WebDriverWait(drivernew, 1000);
-                    wait1.until(ExpectedConditions.elementToBeClickable(element1));
-                    element1.clear();
-                    element1.sendKeys(text1);
-                    
-                    boolean isDataFilled1 = false;
-                    while (!isDataFilled1) {
-                        String textBoxValue = element1.getAttribute(VALUE);
-                        String textBoxtest = element1.getText();
-                        isDataFilled1 = validateTextBoxValue(drivernew, element1, text1, isDataFilled1, textBoxValue,
-                                textBoxtest);
-                    }
-
-                    if (element1.getAttribute("type").equals("password")) {
-                        logger.info("Successfully entered Password : {}", password);
-                        testStepDetails.logTestStepDetails(drivernew, testCaseParam, "Entered Password -> " + password,
-                                "Entered Password -> " + password, pageDetails, startTime, STATUSDONE);
-                    } else {
-                        logger.info(SUCCESSFULLY_ENTERED_TEXT, text1, element1);
-                        testStepDetails.logTestStepDetails(drivernew, testCaseParam, action,
-                                getActionDescription(action, actionDescription), pageDetails, startTime, STATUSDONE);
-                    }
-
-                    success = true;  // If we reach here without exception, operation was successful
-                }
-                
-            } catch (Exception e) {
-                lastException = e;
-                
-                if (retryCount < maxRetries) {
-                    logger.warn("Attempt {} failed. Retrying... Error: {}", retryCount, e.getMessage());
-                    try {
-                        // Exponential backoff: wait longer between each retry
-                        Thread.sleep(1000 * retryCount);
-                    } catch (InterruptedException ie) {
-                        Thread.currentThread().interrupt();
-                        throw new CustomException("Retry interrupted: " + ie.getMessage());
-                    }
-                }
-				retryCount++;
-            }
-        }
-}}
-===============
-public void jsClick(WebDriver driver, WebElement element) throws CustomException {
-    JavascriptExecutor js = (JavascriptExecutor)driver;
-    int maxRetries = 3;
-    int retryCount = 0;
-    Exception lastException = null;
-
-    while (retryCount < maxRetries) {
+public void Select(WebDriver _driver, WebElement element, SelectType type, String options, TestCaseParam testCaseParam, PageDetails pageDetails) throws Exception {
+ 
+        String Action = "Select dropdown Value:" + options;
+        String ActionDescription = "Select dropdown Value:-" + options;
+        LocalDateTime StartTime = LocalDateTime.now();
+ 
         try {
-            // Wait for element to be clickable
-            WebDriverWait wait = new WebDriverWait(driver, 10);
-            wait.until(ExpectedConditions.elementToBeClickable(element));
-            
-            // Perform the click
-            js.executeScript("arguments[0].click();", element);
-            
-            // If successful, return from the method
-            logger.info("Successfully clicked element using JavaScript");
-            return;
-            
-        } catch (Exception e) {
-            lastException = e;
-            retryCount++;
-            
-            if (retryCount < maxRetries) {
-                // Calculate delay with exponential backoff
-                int delay = 1000 * retryCount;
-                logger.warn("Click attempt {} failed. Retrying in {} ms. Error: {}", 
-                    retryCount, delay, e.getMessage());
-                
-                try {
-                    Thread.sleep(delay);
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    throw new CustomException("Retry interrupted: " + ie.getMessage());
-                }
+ 
+            logger.info("Option = " + options);
+ 
+            switch (type) {
+                case SelectByIndex:
+                    try {
+ 
+ 
+                        if (options.equals("N//A") || options.equals("N/A") || options.equals("n//a") || options.equals("n/a")) {
+                            break;
+                        } else {
+ 
+                            WebKeywords.Instance().FluentWait(_driver, element);
+                            ScrollIntoViewElement(_driver, element);
+                            if (element.isEnabled()) {
+                                Action = "Selected Value:-" + options;
+                                ActionDescription = "Selected Value:-" + options;
+                                Select select = new Select(element);
+                                select.selectByIndex(Integer.parseInt(options));
+                                TestStepDetails.logTestStepDetails(_driver, testCaseParam, Action, ActionDescription, pageDetails, StartTime, Status_Done);
+                            }
+ 
+                        }
+ 
+                    } catch (Exception e) {
+                        logger.error("Failed ==> " + Action + ActionDescription);
+                        TestStepDetails.logExceptionDetails(_driver, testCaseParam, Action, ActionDescription, StartTime, e);
+                        TestStepDetails.logTestStepDetails(_driver, testCaseParam, Action, ActionDescription, pageDetails, StartTime, Status_Fail);
+ 
+                        throw e;
+                    }
+ 
+                    break;
+                case SelectByText:
+ 
+                    if (options.equals("N//A") || options.equals("N/A") || options.equals("n//a") || options.equals("n/a")) {
+                        break;
+                    } else {
+                        WebKeywords.Instance().FluentWait(_driver, element);
+                        ScrollIntoViewElement(_driver, element);
+                        if (element.isEnabled() && element.isDisplayed()) {
+                            Action = "Selected Value:-" + options;
+                            ActionDescription = "Selected Value:-" + options;
+                            Select select1 = new Select(element);
+                            select1.selectByVisibleText(options);
+                            TestStepDetails.logTestStepDetails(_driver, testCaseParam, Action, ActionDescription, pageDetails, StartTime, Status_Done);
+                            //VerifyValueSelected(_driver, element,options,testCaseParam,pageDetails);
+                        }
+ 
+ 
+                    }
+                    break;
+                case SelectByValue:
+ 
+                    WebKeywords.Instance().FluentWait(_driver, element);
+                    ScrollIntoViewElement(_driver, element);
+                    //WebKeywords.Instance().WaitElementToBeClickablenew(_driver, element, 5000);
+                    Select select2 = new Select(element);
+                    select2.selectByValue(options);
+                    TestStepDetails.logTestStepDetails(_driver, testCaseParam, Action, ActionDescription, pageDetails, StartTime, Status_Done);
+ 
+                    VerifyValueSelected(_driver, element, options, testCaseParam, pageDetails);
+                    Thread.sleep(100);
+                    break;
+                default:
+                    throw new Exception("Get error in using Selected");
             }
+        } catch (Exception e) {
+            logger.error("Failed ==> " + Action + ActionDescription);
+            TestStepDetails.logExceptionDetails(_driver, testCaseParam, Action, ActionDescription, StartTime, e);
+            TestStepDetails.logTestStepDetails(_driver, testCaseParam, Action, ActionDescription, pageDetails, StartTime, Status_Fail);
+ 
+            throw e;
         }
     }
-==========
-
