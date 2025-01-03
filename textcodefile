@@ -81,3 +81,11 @@ public void Select(WebDriver _driver, WebElement element, SelectType type, Strin
             throw e;
         }
     }
+
+======================
+
+public enum SelectType {
+        SelectByIndex,
+        SelectByText,
+        SelectByValue,
+    }
