@@ -1,9 +1,12 @@
 package cares.cwds.salesforce.pom.screening;
 
+import static java.lang.String.format;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Map;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -18,6 +21,7 @@ import reportutilities.common.ReportCommon;
 import reportutilities.extentmodel.PageDetails;
 import reportutilities.model.TestCaseParam;
 import testsettings.TestRunSettings;
+import uitests.testng.common.CommonOperations;
 import cares.cwds.salesforce.common.utilities.Util;
 import cares.cwds.salesforce.constants.ModuleConstants;
 import cares.cwds.salesforce.constants.ScreenConstants;
@@ -51,34 +55,32 @@ public class ScDetails {
 		testStepLogDetails.logModuleAndScreenDetails(testCaseParam, moduleName, screenName);
 	}
 
-	@FindBy(how = How.XPATH, using = "//*[@id=\"173589001766660-1062\"]/slot/div/div/div[1]/div/c-kreator-input-rich-text-area/lightning-input-rich-text/div/div/div/div[2]/div[1]")
+	@FindBy(xpath = "//lightning-input-rich-text[@data-name='Call_Narrative__c']//div[@part='rich-text-editor-textarea']//div")
+	public WebElement narrativeClick;
+	
+	@FindBy(how = How.XPATH, using = "//div[@role='textbox' and @aria-label='Compose text']")
 	public WebElement narrative;
 
-	@FindBy(how = How.XPATH, using = "//*[@id=\"input-1102\"]")
-	public WebElement datetime;
+	@FindBy(how = How.XPATH, using = "(//label[text()='Call Date and Time']/../../following-sibling::lightning-input//input)[1]")
+	public WebElement callDateAndTime;
 
-	@FindBy(how = How.XPATH, using = "//*[@id=\"173589001766660-1062\"]/slot/div/div/div[3]/div/div/div[1]/div[1]/c-kreator-input-date-time/lightning-input/lightning-datetimepicker/div/fieldset/div[1]/div/div/lightning-datepicker/div[1]/div/lightning-calendar/div/lightning-focus-trap/slot/button")
-	public WebElement dateToday;
-
-	@FindBy(how = How.XPATH, using = "//*[@id=\"combobox-button-1111\"]")
+	@FindBy(how = How.XPATH, using = "(//label[text()='Reason for the Call']//ancestor::c//lightning-combobox//lightning-icon//span)[1]")
 	public WebElement RFCdd;
 
-	@FindBy(how = How.XPATH, using = "//*[@id=\"combobox-button-1111-1-1111\"]/span[2]/span")
-	public WebElement RFDddValue;
+	public String RFDddValue  = "//span[text()='%s']";
 
-	@FindBy(how = How.XPATH, using = "//*[@id=\"input-1119\"]")
+	@FindBy(how = How.XPATH, using = "//label[text()='Screening Name']//ancestor::c-kreator-input-text//lightning-input//input")
 	public WebElement scName;
 
-	@FindBy(how = How.XPATH, using = "//*[@id=\"1735890017691233-1124\"]/slot/div/div/div[1]/div/c-kreator-input-selection-radio/lightning-radio-group/fieldset/div/span[3]/label/span[1]")
+	@FindBy(how = How.XPATH, using = "//label[@class='slds-radio__label']/span[text()='Non-Mandated Reporter']")
 	public WebElement callerType;
 
-	@FindBy(how = How.XPATH, using = "//*[@id=\"combobox-button-1260\"]")
+	@FindBy(how = How.XPATH, using = "(//label[text()='Call back Required']//ancestor::c-kreator-input-selection-picklist//lightning-combobox//lightning-icon//span)[1]")
 	public WebElement callbackReqDD;
 
-	@FindBy(how = How.XPATH, using = "//*[@id=\"combobox-button-1260-2-1260\"]/span[2]")
-	public WebElement CBRddVal;
-
-	@FindBy(how = How.XPATH, using = "//*[@id=\"brandBand_5\"]/div/div/div/div/div[2]/span/c-cares_-generic-l-w-c-container/c-cares_screening-intake-details-flow/div/div/div/div[5]/div/div/div/c-kreator-action-buttons/button/div/div")
+	public String CBRddVal = "//span[text()='%s']";
+	
+	@FindBy(how = How.XPATH, using = "//div[text()='Save and Proceed']")
 	public WebElement save;
 
 	
@@ -91,10 +93,9 @@ public class ScDetails {
 		try {
 			Map<String, ArrayList<String>>	testCaseDataSd = util.getScreenTCData(screenName, testCaseParam.getTestCaseName(),TestRunSettings.getTestDataPath(), TestRunSettings.getTestDataMappingFileName() ,TestRunSettings.getTestDataMappingSheetNameSd(),scriptIteration,pomIteration);
 
-
 			String narrativeTD = testCaseDataSd.get("SCREENING_NARRATIVE").get(0);
-			String datetimeTD = testCaseDataSd.get("CALL_DT").get(0);
-			String dateTodayTD = testCaseDataSd.get("CALL_DT_TODAY").get(0);
+			String datetime = testCaseDataSd.get("CALL_DATE_AND_TIME").get(0);
+			//String dateTodayTD = testCaseDataSd.get("CALL_DT_TODAY").get(0);
 			String RFCddTD = testCaseDataSd.get("RFCdd").get(0);
 			String RFDddValueTD = testCaseDataSd.get("RFDddValue").get(0);
 			String scNameTD = testCaseDataSd.get("scName").get(0);
@@ -103,22 +104,27 @@ public class ScDetails {
 			String CBRddValTD = testCaseDataSd.get("CBRddVal").get(0);
 			String saveTD = testCaseDataSd.get("save").get(0);
 
-		
+			Webkeywords.instance().click(driver,  narrativeClick,narrativeTD, testCaseParam,action);
 			Webkeywords.instance().setText(driver,  narrative,narrativeTD, testCaseParam,action);
-			Webkeywords.instance().click(driver,  datetime,datetimeTD, testCaseParam,action);
-			Webkeywords.instance().click(driver,  dateToday,dateTodayTD, testCaseParam,action);
+			Webkeywords.instance().setDateText(driver, callDateAndTime, CommonOperations.getDate("M/d/yyyy", datetime), testCaseParam, action);		
 			Webkeywords.instance().click(driver,  RFCdd,RFCddTD, testCaseParam,action);
-			Webkeywords.instance().click(driver,  RFDddValue,RFDddValueTD, testCaseParam,action);
+			
+			WebElement ddVal =  driver.findElement(By.xpath(format(RFDddValue,RFDddValueTD)));
+			Webkeywords.instance().click(driver,  ddVal,RFDddValueTD, testCaseParam,action);
+			
 			Webkeywords.instance().click(driver,  scName,scNameTD, testCaseParam,action);
 			Webkeywords.instance().click(driver,  callerType,callerTypeTD, testCaseParam,action);
 			Webkeywords.instance().click(driver,  callbackReqDD,callbackReqDDTD, testCaseParam,action);
-			Webkeywords.instance().click(driver,  CBRddVal,CBRddValTD, testCaseParam,action);
+			
+			WebElement val =  driver.findElement(By.xpath(format(CBRddVal,RFDddValueTD)));
+			Webkeywords.instance().click(driver,  val,CBRddValTD, testCaseParam,action);
+			
 			Webkeywords.instance().click(driver,  save,saveTD, testCaseParam,action);
 			
 		}
 		catch (Exception e)
 		{
-			logger.error("Failed== {}",action.getPageActionDescription());
+			logger.error(FAILED_FORMAT,action.getPageActionDescription());
 			exceptionDetails.logExceptionDetails(driver, testCaseParam, action.getPageActionName(), action.getPageActionDescription(), startTime,e);
 			
 			throw e;
