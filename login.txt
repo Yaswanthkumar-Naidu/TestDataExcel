@@ -16,3 +16,52 @@ String [] hlWorker = {"AutoTitleIV_Placement_State_V1SIT@osi.ca.gov","Cares@4013
                 String [] cmWorker = {"autocmworker451_CCosta_V1SIT@osi.ca.gov","Cares@401347563679"};
 	        loginMap.put("CMWorkerContraCosta", cmWorker);
 
+============================================
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import java.time.Duration;
+
+public class WebDriverManager {
+    private WebDriver driver;
+    
+    public WebDriver initializeDriver() {
+        try {
+            ChromeOptions options = new ChromeOptions();
+            
+            // Essential options to prevent 403
+            options.addArguments("--remote-allow-origins=*");
+            options.addArguments("--no-sandbox");
+            options.addArguments("--disable-dev-shm-usage");
+            
+            // Additional options to avoid detection
+            options.addArguments("--disable-blink-features=AutomationControlled");
+            options.addArguments("--disable-extensions");
+            options.addArguments("--disable-notifications");
+            options.addArguments("--disable-popup-blocking");
+            
+            // Remove automation flags
+            options.setExperimentalOption("excludeSwitches", 
+                Arrays.asList("enable-automation", "enable-logging"));
+            
+            // Add user preferences
+            Map<String, Object> prefs = new HashMap<>();
+            prefs.put("credentials_enable_service", false);
+            prefs.put("profile.password_manager_enabled", false);
+            options.setExperimentalOption("prefs", prefs);
+            
+            driver = new ChromeDriver(options);
+            
+            // Set timeouts
+            driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+            
+            return driver;
+            
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to initialize WebDriver: " + e.getMessage());
+        }
+    }
+}
