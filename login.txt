@@ -74,3 +74,95 @@ home.selectLinkFromNavigationMenue(testCaseParam, scriptIteration, "1","Home");
     	home.verifyingHomeMyTaskListFieldsHeaders(testCaseParam, scriptIteration, "1");
     	home.verifyingHomeMyOrganizationFieldsHeaders(testCaseParam, scriptIteration, "1");	
 
+
+public void verifyingHomeCurrentTaskAssignmentsFieldsHeaders (TestCaseParam testCaseParam, String scriptIteration, String pomIteration) throws CustomException {
+		PageDetails action = new PageDetails();
+		LocalDateTime startTime= LocalDateTime.now();
+		action.setPageActionName("verifying Current Task Assignments Fields");
+		action.setPageActionDescription("verifying Current Task Assignments Fields");
+		try {
+			Map<String, ArrayList<String>>	testCaseDataSd = util.getScreenTCData(screenName, TestRunSettings.getTestNGTestMethodName(),TestRunSettings.getTestDataPath(),
+					TestRunSettings.getTestDataMappingFileName() ,TestRunSettings.getTestDataMappingSheetNameSd(),scriptIteration,pomIteration);
+				
+				Webkeywords.instance().verifyElementDisplayed(driver, genericLocators.link(driver, "Current Task Assignments",testCaseDataSd.get("CURRENTTASKASSIGNMENT_VERIFY").get(0)), testCaseDataSd.get("CURRENTTASKASSIGNMENT_VERIFY").get(0), testCaseParam, action);
+				Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver, "Due Date",testCaseDataSd.get("DUEDATE_VERIFY").get(0)), testCaseDataSd.get("DUEDATE_VERIFY").get(0), testCaseParam, action);
+				Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver, "Subject",testCaseDataSd.get("SUBJECT_VERIFY").get(0)), testCaseDataSd.get("SUBJECT_VERIFY").get(0), testCaseParam, action);
+				Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver, "Related To",testCaseDataSd.get("RELATEDTO_VERIFY").get(0)), testCaseDataSd.get("RELATEDTO_VERIFY").get(0), testCaseParam, action);
+				Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver, "Priority",testCaseDataSd.get("PRIORITY_VERIFY").get(0)), testCaseDataSd.get("PRIORITY_VERIFY").get(0), testCaseParam, action);
+				Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver, "Status",testCaseDataSd.get("STATUS_VERIFY").get(0)), testCaseDataSd.get("STATUS_VERIFY").get(0), testCaseParam, action);
+				Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver, "Source",testCaseDataSd.get("SOURCE_VERIFY").get(0)), testCaseDataSd.get("SOURCE_VERIFY").get(0), testCaseParam, action);
+				
+				
+		} catch (Exception e) {
+				logger.error("Failed == {} ", action.getPageActionDescription());
+				exceptionDetails.logExceptionDetails(driver, testCaseParam, action.getPageActionName(), action.getPageActionDescription(), startTime,e);
+			}
+	}
+	
+	public void verifyingHomeServiceTypesFieldsHeaders (TestCaseParam testCaseParam, String scriptIteration, String pomIteration) throws CustomException {
+		PageDetails action = new PageDetails();
+		LocalDateTime startTime= LocalDateTime.now();
+		action.setPageActionName("verifying ServiceTypes Fields");
+		action.setPageActionDescription("verifying ServiceTypes Fields");
+		try {
+			Map<String, ArrayList<String>>	testCaseDataSd = util.getScreenTCData(screenName, TestRunSettings.getTestNGTestMethodName(),TestRunSettings.getTestDataPath(),
+					TestRunSettings.getTestDataMappingFileName() ,TestRunSettings.getTestDataMappingSheetNameSd(),scriptIteration,pomIteration);
+				
+				Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver, "Service Types",testCaseDataSd.get("SERVICETYPES_VERIFY").get(0)), testCaseDataSd.get("SERVICETYPES_VERIFY").get(0), testCaseParam, action);
+				Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver, "Service Type Name",testCaseDataSd.get("SERVICETYPENAME_VERIFY").get(0)), testCaseDataSd.get("SERVICETYPENAME_VERIFY").get(0), testCaseParam, action);
+				Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver, "Service Type Description",testCaseDataSd.get("SERVICETYPEDESCRIPTION_VERIFY").get(0)), testCaseDataSd.get("SERVICETYPEDESCRIPTION_VERIFY").get(0), testCaseParam, action);
+				Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver, "Service Category",testCaseDataSd.get("SERVICECATEGORY_VERIFY").get(0)), testCaseDataSd.get("SERVICECATEGORY_VERIFY").get(0), testCaseParam, action);
+				Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver, "Last Modified Date",testCaseDataSd.get("LASTMODIEFIEDDATE_VERIFY").get(0)), testCaseDataSd.get("LASTMODIEFIEDDATE_VERIFY").get(0), testCaseParam, action);
+				
+		} catch (Exception e) {
+				logger.error("Failed == {} ", action.getPageActionDescription());
+				exceptionDetails.logExceptionDetails(driver, testCaseParam, action.getPageActionName(), action.getPageActionDescription(), startTime,e);
+			}
+	}
+	
+	public void verifyingHomeMyTaskListFieldsHeaders (TestCaseParam testCaseParam, String scriptIteration, String pomIteration) throws CustomException {
+		PageDetails action = new PageDetails();
+		LocalDateTime startTime= LocalDateTime.now();
+		action.setPageActionName("verifying MyTaskList Fields");
+		action.setPageActionDescription("verifying MyTaskList Fields");
+		try {
+			Map<String, ArrayList<String>>	testCaseDataSd = util.getScreenTCData(screenName, TestRunSettings.getTestNGTestMethodName(),TestRunSettings.getTestDataPath(),
+					TestRunSettings.getTestDataMappingFileName() ,TestRunSettings.getTestDataMappingSheetNameSd(),scriptIteration,pomIteration);
+				
+			Webkeywords.instance().click(driver, genericLocators.link(driver, "My Task List",testCaseDataSd.get("MYTASKLIST").get(0)),testCaseDataSd.get("MYTASKLIST").get(0), testCaseParam,action);
+			Webkeywords.instance().verifyElementDisplayed(driver, genericLocators.link(driver, "Current Task Assignments",testCaseDataSd.get("CURRENTTASKASSIGNMENT_VERIFY").get(0)), testCaseDataSd.get("CURRENTTASKASSIGNMENT_VERIFY").get(0), testCaseParam, action);
+			Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver, "Due Date",testCaseDataSd.get("DUEDATE_VERIFY").get(0)), testCaseDataSd.get("DUEDATE_VERIFY").get(0), testCaseParam, action);
+			Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver, "Subject",testCaseDataSd.get("SUBJECT_VERIFY").get(0)), testCaseDataSd.get("SUBJECT_VERIFY").get(0), testCaseParam, action);
+			Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver, "Related To",testCaseDataSd.get("RELATEDTO_VERIFY").get(0)), testCaseDataSd.get("RELATEDTO_VERIFY").get(0), testCaseParam, action);
+			Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver, "Priority",testCaseDataSd.get("PRIORITY_VERIFY").get(0)), testCaseDataSd.get("PRIORITY_VERIFY").get(0), testCaseParam, action);
+			Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver, "Status",testCaseDataSd.get("STATUS_VERIFY").get(0)), testCaseDataSd.get("STATUS_VERIFY").get(0), testCaseParam, action);
+			Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver, "Source",testCaseDataSd.get("SOURCE_VERIFY").get(0)), testCaseDataSd.get("SOURCE_VERIFY").get(0), testCaseParam, action);
+			
+			
+		} catch (Exception e) {
+				logger.error("Failed == {} ", action.getPageActionDescription());
+				exceptionDetails.logExceptionDetails(driver, testCaseParam, action.getPageActionName(), action.getPageActionDescription(), startTime,e);
+			}
+	}
+	
+	public void verifyingHomeMyOrganizationFieldsHeaders (TestCaseParam testCaseParam, String scriptIteration, String pomIteration) throws CustomException {
+		PageDetails action = new PageDetails();
+		LocalDateTime startTime= LocalDateTime.now();
+		action.setPageActionName("verifying MyOrganization Fields");
+		action.setPageActionDescription("verifying MyOrganization Fields");
+		try {
+			Map<String, ArrayList<String>>	testCaseDataSd = util.getScreenTCData(screenName, TestRunSettings.getTestNGTestMethodName(),TestRunSettings.getTestDataPath(),
+					TestRunSettings.getTestDataMappingFileName() ,TestRunSettings.getTestDataMappingSheetNameSd(),scriptIteration,pomIteration);
+				
+			Webkeywords.instance().click(driver, genericLocators.link(driver, "My Organizations",testCaseDataSd.get("MYORGANIZATION").get(0)),testCaseDataSd.get("MYORGANIZATION").get(0), testCaseParam,action);
+			Webkeywords.instance().verifyElementDisplayed(driver, genericLocators.link(driver, "New Providers created in past 120 days",testCaseDataSd.get("NEWPROVIDER120DAYS_VERIFY").get(0)), testCaseDataSd.get("NEWPROVIDER120DAYS_VERIFY").get(0), testCaseParam, action);
+			
+			Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver, "Name",testCaseDataSd.get("NAME_VERIFY").get(0)), testCaseDataSd.get("NAME_VERIFY").get(0), testCaseParam, action);
+			
+		} catch (Exception e) {
+				logger.error("Failed == {} ", action.getPageActionDescription());
+				exceptionDetails.logExceptionDetails(driver, testCaseParam, action.getPageActionName(), action.getPageActionDescription(), startTime,e);
+			}
+		
+	}
+
