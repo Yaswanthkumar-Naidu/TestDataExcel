@@ -65,3 +65,12 @@ public class WebDriverManager {
         }
     }
 }
+
+
+
+home.selectLinkFromNavigationMenue(testCaseParam, scriptIteration, "1","Home");
+    	home.verifyingHomeCurrentTaskAssignmentsFieldsHeaders(testCaseParam, scriptIteration, "1");
+    	home.verifyingHomeServiceTypesFieldsHeaders(testCaseParam, scriptIteration, "1");
+    	home.verifyingHomeMyTaskListFieldsHeaders(testCaseParam, scriptIteration, "1");
+    	home.verifyingHomeMyOrganizationFieldsHeaders(testCaseParam, scriptIteration, "1");	
+
