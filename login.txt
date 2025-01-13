@@ -204,4 +204,67 @@ public void verifyingHomeCurrentTaskAssignmentsFieldsHeaders (TestCaseParam test
 	
 </suite> <!-- Suite -->
 
+========================
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.2.2</version>
+            <configuration>
+                <parallel>tests</parallel>
+                <threadCount>3</threadCount>
+                <perCoreThreadCount>false</perCoreThreadCount>
+                <useUnlimitedThreads>false</useUnlimitedThreads>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+
+=====================================
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Suite" parallel="tests" thread-count="3" verbose="2">
+    <!-- Force thread pool size -->
+    <parameter name="suitethreadpoolsize" value="3"/>
+    
+    <test name="T2926" parallel="methods">
+        <classes>
+            <class name="uitests.testng.milestone3.T2926">
+                <methods>
+                    <include name="testT2926" />
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <test name="T2928" parallel="methods">
+        <classes>
+            <class name="uitests.testng.milestone3.T2928">
+                <methods>
+                    <include name="testT2928" />
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <test name="T2922" parallel="methods">
+        <classes>
+            <class name="uitests.testng.milestone3.T2922">
+                <methods>
+                    <include name="testT2922" />
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>
+
+
+==================================
+@BeforeMethod
+public void beforeMethod() {
+    System.out.println("Test running on thread: " + Thread.currentThread().getId() 
+        + " - " + getClass().getSimpleName());
+}
+
+
 
