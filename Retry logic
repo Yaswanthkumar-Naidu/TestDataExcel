@@ -1,0 +1,51 @@
+public void setDateText(WebDriver drivernew, WebElement element1, String text1, TestCaseParam testCaseParam, PageDetails pageDetails) {
+    String action = ENTERED_TEXT + text1;
+    String actionDescription = ENTERED_TEXT + text1;
+    LocalDateTime startTime = LocalDateTime.now();
+    
+    if (!textCheck(text1)) {
+        int maxAttempts = 3;
+        int attempt = 1;
+        boolean success = false;
+        
+        while (attempt <= maxAttempts && !success) {
+            try {
+                // Fluent wait for element
+                Webkeywords.instance().fluentWait(drivernew, element1);
+                
+                // Explicit wait for element to be clickable
+                WebDriverWait wait1 = new WebDriverWait(drivernew, 1000);
+                wait1.until(ExpectedConditions.elementToBeClickable(element1));
+                
+                // Perform the text entry
+                element1.clear();
+                element1.sendKeys(text1);
+                
+                logger.info("Attempt {} - {} {}", attempt, SUCCESSFULLY_ENTERED_TEXT, text1, element1);
+                success = true;
+                
+                testStepDetails.logTestStepDetails(drivernew, testCaseParam, action, actionDescription, 
+                    pageDetails, startTime, STATUSDONE);
+                
+            } catch (Exception e) {
+                if (attempt == maxAttempts) {
+                    logger.error("Failed to enter text after {} attempts. Error: {}", maxAttempts, e.getMessage());
+                    testStepDetails.logTestStepDetails(drivernew, testCaseParam, action, 
+                        "Failed to enter text after " + maxAttempts + " attempts", 
+                        pageDetails, startTime, "FAILED");
+                    throw e;
+                } else {
+                    logger.warn("Attempt {} failed. Retrying...", attempt);
+                    try {
+                        // Add exponential backoff delay between retries
+                        Thread.sleep(1000 * attempt); // 1s, 2s, 3s between retries
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        logger.error("Sleep interrupted: {}", ie.getMessage());
+                    }
+                }
+            }
+            attempt++;
+        }
+    }
+}
