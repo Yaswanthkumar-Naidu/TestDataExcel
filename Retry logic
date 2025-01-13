@@ -49,3 +49,231 @@ public void setDateText(WebDriver drivernew, WebElement element1, String text1, 
         }
     }
 }
+
+=============================
+
+public void selectValueInputDropdown(WebDriver driver, String listValues, String elementName, TestCaseParam testCaseParam, PageDetails pageDetails) {
+    if (!(listValues.equalsIgnoreCase("n/a")) && !(listValues.equalsIgnoreCase("n\\a")) && !(listValues.equalsIgnoreCase(TESTDATA_NOT_APPLICABLE))) {
+        int maxAttempts = 3;
+        int attempt = 1;
+        boolean success = false;
+        Exception lastException = null;
+
+        while (attempt <= maxAttempts && !success) {
+            try {
+                logger.info("Attempt {} - Selecting {} values in {} dropdown", attempt, listValues, elementName);
+                
+                GenericLocators genericLocators = new GenericLocators(driver);
+                WebElement element = genericLocators.dropdown(driver, elementName, listValues);
+                
+                // First click
+                Webkeywords.instance().click(driver, element, "", testCaseParam, pageDetails);
+                
+                // Find and click the value
+                WebElement val = driver.findElement(By.xpath(
+                    "//label[text()='" + elementName + "']//parent::div//parent::div//parent::c-kreator-input-selection-picklist//span[text()='" + listValues + "']"
+                ));
+                
+                Webkeywords.instance().waitElementClickable(driver, val);
+                val.click();
+                
+                logger.info("Successfully selected value {} in {} dropdown on attempt {}", listValues, elementName, attempt);
+                success = true;
+
+            } catch (Exception e) {
+                lastException = e;
+                if (attempt == maxAttempts) {
+                    logger.error("Failed to select dropdown value after {} attempts. Error: {}", maxAttempts, e.getMessage());
+                    throw new RuntimeException("Failed to select dropdown value '" + listValues + "' in '" + elementName + 
+                        "' after " + maxAttempts + " attempts", e);
+                } else {
+                    logger.warn("Attempt {} failed. Retrying... Error: {}", attempt, e.getMessage());
+                    try {
+                        // Exponential backoff delay between retries
+                        long delayMillis = 1000 * attempt; // 1s, 2s, 3s between retries
+                        Thread.sleep(delayMillis);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        logger.error("Sleep interrupted: {}", ie.getMessage());
+                    }
+                }
+            }
+            attempt++;
+        }
+    } else {
+        logger.info("Skipping dropdown selection as value is not applicable: {}", listValues);
+    }
+}
+
+==============================================
+
+public void selectInputDropdownValue(WebDriver driver, String listValues, String elementName, TestCaseParam testCaseParam, PageDetails pageDetails) {
+    if (!(listValues.equalsIgnoreCase("n/a")) && !(listValues.equalsIgnoreCase("n\\a")) && !(listValues.equalsIgnoreCase(TESTDATA_NOT_APPLICABLE))) {
+        int maxAttempts = 3;
+        int attempt = 1;
+        boolean success = false;
+        Exception lastException = null;
+
+        while (attempt <= maxAttempts && !success) {
+            try {
+                logger.info("Attempt {} - Selecting values {} in {} dropdown", attempt, listValues, elementName);
+                
+                GenericLocators genericLocators = new GenericLocators(driver);
+                String[] valuesToSelect = listValues.contains(";") ? listValues.split(";") : new String[]{listValues};
+                
+                // Get and click the dropdown element
+                WebElement element = genericLocators.dropdown(driver, elementName, listValues);
+                Webkeywords.instance().click(driver, element, "", testCaseParam, pageDetails);
+                
+                // Get the dropdown list
+                List<WebElement> listElement = genericLocators.dropdownList(driver, elementName, listValues);
+                
+                boolean allValuesSelected = true;
+                for (String value : valuesToSelect) {
+                    // Refresh list if empty
+                    if (listElement == null || listElement.isEmpty()) {
+                        this.click(driver, element, "", testCaseParam, pageDetails);
+                        listElement = genericLocators.dropdownList(driver, elementName, listValues);
+                    }
+                    
+                    boolean flag = false;
+                    flag = extracted(driver, listElement, testCaseParam, pageDetails, value, flag);
+                    
+                    if (!flag) {
+                        allValuesSelected = false;
+                        selectIndexPositionFromInputDropdown(driver, listValues, elementName, testCaseParam, pageDetails);
+                        break;
+                    }
+                }
+                
+                if (allValuesSelected) {
+                    logger.info("Successfully selected all values in {} dropdown on attempt {}", elementName, attempt);
+                    success = true;
+                } else {
+                    throw new RuntimeException("Failed to select all values in dropdown");
+                }
+
+            } catch (Exception e) {
+                lastException = e;
+                if (attempt == maxAttempts) {
+                    logger.error("Failed to select dropdown values after {} attempts. Error: {}", maxAttempts, e.getMessage());
+                    throw new RuntimeException("Failed to select values '" + listValues + "' in '" + elementName + 
+                        "' after " + maxAttempts + " attempts", e);
+                } else {
+                    logger.warn("Attempt {} failed. Retrying... Error: {}", attempt, e.getMessage());
+                    try {
+                        // Exponential backoff delay between retries
+                        long delayMillis = 1000 * attempt; // 1s, 2s, 3s between retries
+                        Thread.sleep(delayMillis);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        logger.error("Sleep interrupted: {}", ie.getMessage());
+                    }
+                }
+            }
+            attempt++;
+        }
+    } else {
+        logger.info("Skipping dropdown selection as value is not applicable: {}", listValues);
+    }
+}
+========================
+
+public void selectDropdownValueByElement(WebDriver driver, WebElement element, List<WebElement> listElement, 
+    String listValues, String elementName, TestCaseParam testCaseParam, PageDetails pageDetails) throws CustomException {
+    
+    if (!(listValues.equalsIgnoreCase("n/a")) && !(listValues.equalsIgnoreCase("n\\a")) 
+        && !(listValues.equalsIgnoreCase(TESTDATA_NOT_APPLICABLE))) {
+        
+        int maxAttempts = 3;
+        int attempt = 1;
+        boolean success = false;
+        CustomException lastException = null;
+
+        while (attempt <= maxAttempts && !success) {
+            try {
+                logger.info("Attempt {} - Selecting {} values in {} dropdown", attempt, listValues, elementName);
+                GenericLocators genericLocators = new GenericLocators(driver);
+
+                // Split values if multiple selections are needed
+                String[] valuesToSelect = listValues.contains(";") ? 
+                    listValues.split(";") : new String[]{listValues};
+
+                // Initial click on dropdown
+                Webkeywords.instance().click(driver, element, "", testCaseParam, pageDetails);
+
+                boolean allValuesSelected = true;
+                for (String value : valuesToSelect) {
+                    // Wait for list elements to be available
+                    Webkeywords.instance().waitTillElementsSizeIsMoreThanZero(listElement);
+
+                    // Refresh list if empty
+                    if (listElement.isEmpty()) {
+                        Webkeywords.instance().click(driver, element, "", testCaseParam, pageDetails);
+                        listElement = genericLocators.dropdownList(driver, elementName, listValues);
+                        
+                        // Double-check if list is still empty after refresh
+                        if (listElement.isEmpty()) {
+                            throw new CustomException("Dropdown list remains empty after refresh");
+                        }
+                    }
+
+                    boolean flag = false;
+                    try {
+                        flag = extracted(driver, listElement, testCaseParam, pageDetails, value, flag);
+                    } catch (Exception e) {
+                        logger.warn("Failed to select value '{}' on attempt {}: {}", 
+                            value, attempt, e.getMessage());
+                        allValuesSelected = false;
+                        break;
+                    }
+
+                    if (!flag) {
+                        allValuesSelected = false;
+                        try {
+                            selectIndexPositionFromInputDropdown(driver, listValues, elementName, 
+                                testCaseParam, pageDetails);
+                        } catch (Exception e) {
+                            logger.warn("Failed to select by index position on attempt {}: {}", 
+                                attempt, e.getMessage());
+                        }
+                        break;
+                    }
+                }
+
+                if (allValuesSelected) {
+                    logger.info("Successfully selected all values in {} dropdown on attempt {}", 
+                        elementName, attempt);
+                    success = true;
+                } else {
+                    throw new CustomException("Failed to select all values in dropdown");
+                }
+
+            } catch (CustomException e) {
+                lastException = e;
+                if (attempt == maxAttempts) {
+                    logger.error("Failed to select dropdown values after {} attempts. Error: {}", 
+                        maxAttempts, e.getMessage());
+                    throw new CustomException("Failed to select values '" + listValues + "' in '" + 
+                        elementName + "' after " + maxAttempts + " attempts: " + e.getMessage());
+                } else {
+                    logger.warn("Attempt {} failed. Retrying... Error: {}", attempt, e.getMessage());
+                    try {
+                        // Exponential backoff delay between retries
+                        long delayMillis = 1000 * attempt; // 1s, 2s, 3s between retries
+                        Thread.sleep(delayMillis);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        logger.error("Sleep interrupted: {}", ie.getMessage());
+                    }
+                }
+            }
+            attempt++;
+        }
+    } else {
+        logger.info("Skipping dropdown selection as value is not applicable: {}", listValues);
+    }
+}
+=====================
+
+
