@@ -1,0 +1,112 @@
+public void setDateText(WebDriver drivernew, WebElement element1, String text1, TestCaseParam testCaseParam,PageDetails pageDetails)
+	{
+		String action = ENTERED_TEXT + text1;
+		String actionDescription = ENTERED_TEXT+ text1;
+
+		LocalDateTime startTime=  LocalDateTime.now();
+
+			if(!textCheck(text1))
+			{
+				Webkeywords.instance().fluentWait(drivernew, element1);
+				WebDriverWait wait1 = new WebDriverWait(drivernew, 1000);
+				wait1.until(ExpectedConditions.elementToBeClickable(element1));
+				element1.clear();
+				element1.sendKeys(text1);
+				logger.info(SUCCESSFULLY_ENTERED_TEXT ,text1 , element1);
+
+				testStepDetails.logTestStepDetails(drivernew, testCaseParam, action, actionDescription,pageDetails, startTime, STATUSDONE);
+				try {
+					Thread.sleep(0);
+				} catch (InterruptedException e) {
+					logger.error(e.getMessage());
+				}
+			}
+	}
+================
+
+public void selectValueInputDropdown(WebDriver driver, String listValues, String elementName, TestCaseParam testCaseParam, PageDetails pageDetails){
+
+		if (!(listValues.equalsIgnoreCase("n/a")) && !(listValues.equalsIgnoreCase("n\\a")) && !(listValues.equalsIgnoreCase(TESTDATA_NOT_APPLICABLE))) {
+			GenericLocators genericLocators =  new GenericLocators(driver);
+	
+			logger.info("user is selecting {} values in {} dropdown", listValues,elementName);
+			
+			WebElement element = genericLocators.dropdown(driver, elementName, listValues);
+			Webkeywords.instance().click(driver,element, "", testCaseParam, pageDetails);
+			
+			WebElement val = driver.findElement(By.xpath("//label[text()='"+elementName+"']//parent::div//parent::div//parent::c-kreator-input-selection-picklist//span[text()='"+listValues+"']"));
+            Webkeywords.instance.waitElementClickable(driver, val);
+			val.click();
+		}
+	}
+	
+	public void selectInputDropdownValue(WebDriver driver, String listValues, String elementName, TestCaseParam testCaseParam, PageDetails pageDetails){
+
+		if (!(listValues.equalsIgnoreCase("n/a")) && !(listValues.equalsIgnoreCase("n\\a")) && !(listValues.equalsIgnoreCase(TESTDATA_NOT_APPLICABLE))) {
+			GenericLocators genericLocators =  new GenericLocators(driver);
+	
+			logger.info("user is selecting {} values in {} dropdown", listValues,elementName);
+
+			String[] valuesToSelect;
+			if (listValues.contains(";")) {
+				valuesToSelect = listValues.split(";");
+			} else {
+				valuesToSelect = new String[] { listValues };
+			}
+			WebElement element = genericLocators.dropdown(driver, elementName, listValues);
+			Webkeywords.instance().click(driver,element, "", testCaseParam, pageDetails);
+						
+			List<WebElement> listElement = genericLocators.dropdownList(driver,elementName, listValues);
+			
+			for (String value : valuesToSelect) {
+				
+				if (listElement == null || listElement.isEmpty()) {
+					this.click(driver,element, "", testCaseParam, pageDetails);
+					listElement = genericLocators.dropdownList(driver,elementName,listValues);
+				}
+				boolean flag = false;
+				flag = extracted(driver, listElement, testCaseParam, pageDetails, value, flag);
+	
+				if (!flag) { 
+					selectIndexPositionFromInputDropdown(driver,listValues, elementName, testCaseParam, pageDetails);
+					break;
+				}
+	
+			}
+		}
+	}
+
+============================
+
+public void selectDropdownValueByElement(WebDriver driver, WebElement element, List<WebElement> listElement,String listValues, String elementName, TestCaseParam testCaseParam, PageDetails pageDetails) throws CustomException {
+		if (!(listValues.equalsIgnoreCase("n/a")) && !(listValues.equalsIgnoreCase("n\\a")) && !(listValues.equalsIgnoreCase(TESTDATA_NOT_APPLICABLE))) {
+			GenericLocators genericLocators =  new GenericLocators(driver);
+
+			logger.info("user is selecting {} values in {} dropdown" , listValues, elementName);
+
+			String[] valuesToSelect;
+			if (listValues.contains(";")) {
+				valuesToSelect = listValues.split(";");
+			} else {
+				valuesToSelect = new String[] { listValues };
+			}
+			Webkeywords.instance().click(driver,element, "", testCaseParam, pageDetails);
+			for (String value : valuesToSelect) {
+				Webkeywords.instance().waitTillElementsSizeIsMoreThanZero(listElement);
+
+				if (listElement.isEmpty()) {
+					Webkeywords.instance().click(driver,element, "", testCaseParam, pageDetails);
+					listElement = genericLocators.dropdownList(driver,elementName,listValues);
+				}
+				boolean flag = false;
+				flag = extracted(driver, listElement, testCaseParam, pageDetails, value, flag);
+
+				if (!flag) { 
+					selectIndexPositionFromInputDropdown(driver,listValues, elementName, testCaseParam, pageDetails);
+					break;
+				}
+
+			}
+		}
+	}
+
