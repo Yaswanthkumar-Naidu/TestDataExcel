@@ -166,3 +166,42 @@ public void verifyingHomeCurrentTaskAssignmentsFieldsHeaders (TestCaseParam test
 		
 	}
 
+================================
+
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Suite" parallel="tests" thread-count="3">
+
+	<test name="T2926">
+    <classes>
+      <class name="uitests.testng.milestone3.T2926">
+      <methods>
+      	<include name="testT2926" />
+			</methods>
+	  </class>
+	</classes>
+	</test>
+	
+	<test name="T2928">
+    <classes>
+      <class name="uitests.testng.milestone3.T2928">
+      <methods>
+      	<include name="testT2928" />
+			</methods>
+	  </class>
+	</classes>
+	</test>
+	
+	<test name="T2922">
+    <classes>
+      <class name="uitests.testng.milestone3.T2922">
+      <methods>
+      	<include name="testT2922" />
+			</methods>
+	  </class>
+	</classes>
+	</test>
+	
+	
+</suite> <!-- Suite -->
+
+
