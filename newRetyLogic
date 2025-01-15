@@ -141,75 +141,60 @@ public void jsClick(WebDriver driver, WebElement element) throws CustomException
 	}
 ========================
 
-public void setText(WebDriver driver, WebElement element, String text, TestCaseParam testCaseParam, PageDetails pageDetails) throws CustomException {
-    if (!(text.equalsIgnoreCase("n/a")) && !(text.equalsIgnoreCase("n\\a")) && !(text.equalsIgnoreCase(TESTDATA_NOT_APPLICABLE))) {
-        String action = ENTERED_TEXT + text;
-        String actionDescription = ENTERED_TEXT + text;
-        String password = "*".repeat(text.length());
+public void setText(WebDriver drivernew, WebElement element1, String text1, TestCaseParam testCaseParam, PageDetails pageDetails) {
+    if (!(text1.equalsIgnoreCase("n/a")) && !(text1.equalsIgnoreCase("n\\a")) && !(text1.equalsIgnoreCase(TESTDATA_NOT_APPLICABLE))) {
+        String action = ENTERED_TEXT + text1;
+        String actionDescription = ENTERED_TEXT + text1;
+        String password = "*".repeat(text1.length());
         LocalDateTime startTime = LocalDateTime.now();
 
         int maxRetries = TestRunSettings.getRetryAttempts();
         int retryCount = 0;
         boolean success = false;
+        Exception lastException = null;
 
         while (!success && retryCount < maxRetries) {
             try {
-                if (!textCheck(text)) {
-                    // Use proper timeout duration
-                    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-                    wait.until(ExpectedConditions.elementToBeClickable(element));
+                if (!textCheck(text1)) {
+                    Webkeywords.instance().fluentWait(drivernew, element1);
+                    WebDriverWait wait1 = new WebDriverWait(drivernew, 1000);
+                    wait1.until(ExpectedConditions.elementToBeClickable(element1));
+                    element1.clear();
+                    element1.sendKeys(text1);
+
+                    boolean isDataFilled1 = false;
+                    while (!isDataFilled1) {
+                        String textBoxValue = element1.getAttribute(VALUE);
+                        String textBoxtest = element1.getText();
+                        isDataFilled1 = validateTextBoxValue(drivernew, element1, text1, isDataFilled1, textBoxValue,
+                                textBoxtest);
+                    }
                     
-                    element.clear();
-                    element.sendKeys(text);
-
-                    // Add timeout for data validation
-                    long startWaitTime = System.currentTimeMillis();
-                    long timeout = 30000; // 30 seconds timeout
-                    boolean isDataFilled = false;
-
-                    while (!isDataFilled && (System.currentTimeMillis() - startWaitTime) < timeout) {
-                        String textBoxValue = element.getAttribute(VALUE);
-                        String textBoxTest = element.getText();
-                        
-                        isDataFilled = validateTextBoxValue(driver, element, text, false, textBoxValue, textBoxTest);
-                        
-                        if (!isDataFilled) {
-                            Thread.sleep(500); // Small delay between checks
-                        }
-                    }
-
-                    // Throw exception if timeout occurred
-                    if (!isDataFilled) {
-                        throw new CustomException("Timeout waiting for text to be entered correctly");
-                    }
-
-                    // Log success based on element type
-                    if (element.getAttribute("type").equals("password")) {
+                    if (element1.getAttribute("type").equals("password")) {
                         logger.info("Successfully entered Password : {}", password);
-                        testStepDetails.logTestStepDetails(driver, testCaseParam, 
-                            "Entered Password -> " + password,
-                            "Entered Password -> " + password, 
-                            pageDetails, startTime, STATUSDONE);
+                        testStepDetails.logTestStepDetails(drivernew, testCaseParam, "Entered Password -> " + password,
+                                "Entered Password -> " + password, pageDetails, startTime, STATUSDONE);
                     } else {
-                        logger.info(SUCCESSFULLY_ENTERED_TEXT, text, element);
-                        testStepDetails.logTestStepDetails(driver, testCaseParam, 
-                            action,
-                            getActionDescription(action, actionDescription), 
-                            pageDetails, startTime, STATUSDONE);
+                        logger.info(SUCCESSFULLY_ENTERED_TEXT, text1, element1);
+                        testStepDetails.logTestStepDetails(drivernew, testCaseParam, action,
+                                getActionDescription(action, actionDescription), pageDetails, startTime, STATUSDONE);
                     }
                     success = true;
                 }
-
             } catch (Exception e) {
-                if (retryCount < maxRetries - 1) {
+                lastException = e;
+                if (retryCount < maxRetries - 1) {  // Only log if not the last attempt
                     logger.warn("Attempt {} failed. Retrying... Error: {}", retryCount + 1, e.getMessage());
                     pause();
-                } else {
-                    logger.error("Failed to enter text after {} attempts. Last error: {}", maxRetries, e.getMessage());
-                    throw new CustomException("Failed to enter text after " + maxRetries + " attempts: " + e.getMessage());
                 }
             }
             retryCount++;
+        }
+
+        // If all attempts failed, throw the last exception
+        if (!success) {
+            logger.error("Failed to set text after {} attempts", maxRetries);
+            throw new RuntimeException("Failed to set text '" + text1 + "' after " + maxRetries + " attempts", lastException);
         }
     }
 }
