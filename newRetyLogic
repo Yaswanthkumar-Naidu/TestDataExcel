@@ -198,3 +198,91 @@ public void setText(WebDriver drivernew, WebElement element1, String text1, Test
         }
     }
 }
+
+===========================
+screen shot
+===========================
+public String captureScreenShot(WebDriver driver, String testCaseName) {
+    try {
+        String screenShotFileName = testCaseName.substring(1, 15) + "_" + getCurrentTime() + ".jpeg";
+        screenShotFileName = screenShotFileName.replace(" ", "_");
+        String base64Screenshot;
+
+        if (ReportContants.isFullPageScreenShot()) {
+            base64Screenshot = captureFullPageBase64(driver);
+        } else {
+            base64Screenshot = captureRegularBase64(driver);
+        }
+
+        return "data:image/jpeg;base64," + base64Screenshot;
+    } catch (Exception e) {
+        System.out.println("Failed to capture screenshot: " + e.getMessage());
+        return null;
+    }
+}
+
+private String captureRegularBase64(WebDriver driver) {
+    try {
+        TakesScreenshot ts = (TakesScreenshot) driver;
+        return ts.getScreenshotAs(OutputType.BASE64);
+    } catch (Exception e) {
+        System.out.println("Failed to capture regular screenshot: " + e.getMessage());
+        return null;
+    }
+}
+
+private String captureFullPageBase64(WebDriver driver) {
+    try {
+        // Get the total height of the page
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        Long scrollHeight = (Long) js.executeScript("return Math.max(" +
+            "document.body.scrollHeight, document.documentElement.scrollHeight," +
+            "document.body.offsetHeight, document.documentElement.offsetHeight," +
+            "document.body.clientHeight, document.documentElement.clientHeight);");
+        
+        // Set viewport height
+        Long windowHeight = (Long) js.executeScript("return window.innerHeight");
+        
+        // Create full page screenshot
+        BufferedImage fullImg = new BufferedImage(
+            driver.manage().window().getSize().width,
+            scrollHeight.intValue(),
+            BufferedImage.TYPE_INT_RGB
+        );
+        Graphics2D graphics = fullImg.createGraphics();
+        
+        // Scroll and capture
+        int heightCovered = 0;
+        while (heightCovered < scrollHeight) {
+            js.executeScript("window.scrollTo(0, " + heightCovered + ")");
+            Thread.sleep(100); // Wait for scroll
+            
+            String base64Part = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BASE64);
+            byte[] decodedPart = Base64.getDecoder().decode(base64Part);
+            BufferedImage part = ImageIO.read(new ByteArrayInputStream(decodedPart));
+            
+            // Draw the part into the full image
+            graphics.drawImage(part, 0, heightCovered, null);
+            heightCovered += windowHeight;
+        }
+        
+        // Reset scroll position
+        js.executeScript("window.scrollTo(0, 0)");
+        
+        // Convert full image to base64
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ImageIO.write(fullImg, "jpeg", outputStream);
+        return Base64.getEncoder().encodeToString(outputStream.toByteArray());
+        
+    } catch (Exception e) {
+        System.out.println("Failed to capture full page screenshot: " + e.getMessage());
+        return null;
+    }
+}
+
+// Helper method to get current time in your format
+private String getCurrentTime() {
+    return new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+}
+======================================
+
