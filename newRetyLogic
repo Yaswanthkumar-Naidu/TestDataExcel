@@ -355,3 +355,40 @@ public String captureFullPageBase64(WebDriver driver) {
 
 ==========================
 
+public String getScreenShot(WebDriver driver) {
+    try {
+        TakesScreenshot scrShot = ((TakesScreenshot) driver);
+        
+        // Get the screenshot as base64
+        String base64Screenshot = scrShot.getScreenshotAs(OutputType.BASE64);
+        
+        // Convert base64 to BufferedImage for adding timestamp
+        byte[] decodedBytes = Base64.getDecoder().decode(base64Screenshot);
+        BufferedImage image = ImageIO.read(new ByteArrayInputStream(decodedBytes));
+        
+        // Create a graphics context on the image
+        Graphics2D graphics = image.createGraphics();
+        
+        // Add timestamp to the image
+        Date timestamp = new Date();
+        Font font = new Font("Arial", Font.BOLD, 24);
+        graphics.setFont(font);
+        graphics.setColor(Color.RED);
+        graphics.drawString(timestamp.toString(), 10, 20);
+        
+        // Clean up graphics
+        graphics.dispose();
+        
+        // Convert modified image back to base64
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", outputStream);
+        String finalBase64 = Base64.getEncoder().encodeToString(outputStream.toByteArray());
+        
+        return finalBase64;
+        
+    } catch (Exception e) {
+        logger.error("Failed to capture screenshot: " + e.getMessage());
+        return null;
+    }
+}
+
