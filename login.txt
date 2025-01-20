@@ -1,20 +1,19 @@
 String [] hlWorker = {"AutoTitleIV_Placement_State_V1SIT@osi.ca.gov","Cares@401347563679012"};
 		loginMap.put("TitleIVStaffCDSSPlacement", hlWorker);
 		
-                String [] dlPlacer = {"Auto_TitleIV_Staff_Placer@osi.ca.gov","Cares@401347563625"};
+        String [] dlPlacer = {"Auto_TitleIV_Staff_Placer@osi.ca.gov","Cares@401347563679"};
 		loginMap.put("TitleIVStaffPlacer", dlPlacer);
 		
-                String [] hlWorker1 = {"Auto_Hstaff1_ContraCosta_V1_SIT@nomail.ca.gov","Cares@401347563793981"};                                                          
+		String [] hlWorker1 = {"Auto_Hstaff1_ContraCosta_V1_SIT@nomail.ca.gov","Cares@401347563793981"};                                                          
 		loginMap.put("HLWorkerContraCosta", hlWorker1);
 
-                String [] hlSup = {"Auto_Hsupervisor1_ContraCosta_V1_SIT@nomail.ca.gov","Cares@401347563793981"};
-		loginMap.put("HLSupervisorContraCosta", hlSup);
+		String [] hlSup = {"Auto_Hsupervisor1_ContraCosta_V1_SIT@nomail.ca.gov","Cares@401347563793981"};
+	    loginMap.put("HLSupervisorContraCosta", hlSup);
 
-                String [] erWorker = {"auto_erworker3_contracosta_v1sit@osi.ca.gov","Cares@401347563799"};
-	        loginMap.put("ERWorkerContraCosta", erWorker);
+	    String [] hlSup2 = {"Autohotline155_supervisor_contracosta_V1SIT@osi.ca.gov","Cares@401347563679"};
+	    loginMap.put("HLSupervisorContraCosta2", hlSup2);
 
-                String [] cmWorker = {"autocmworker451_CCosta_V1SIT@osi.ca.gov","Cares@401347563679"};
-	        loginMap.put("CMWorkerContraCosta", cmWorker);
+
 
 ============================================
 
