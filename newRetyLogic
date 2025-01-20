@@ -286,3 +286,72 @@ private String getCurrentTime() {
 }
 ======================================
 
+public String captureFullPageBase64(WebDriver driver) {
+    JavascriptExecutor jsExec = (JavascriptExecutor) driver;
+    
+    // Get window and webpage heights
+    Long windowHeight = (Long) jsExec.executeScript("return window.innerHeight;");
+    Long webpageHeight = (Long) jsExec.executeScript("return document.body.scrollHeight;");
+    Long currentWindowScroll = 0L;
+    
+    try {
+        // Create a BufferedImage for the full page
+        int pageWidth = driver.manage().window().getSize().width;
+        BufferedImage fullImage = new BufferedImage(pageWidth, webpageHeight.intValue(), BufferedImage.TYPE_INT_RGB);
+        Graphics2D fullImageGraphics = fullImage.createGraphics();
+
+        do {
+            // Scroll to current position
+            jsExec.executeScript("window.scrollTo(0, " + currentWindowScroll + ");");
+
+            // Wait for content to load
+            Actions act = new Actions(driver);
+            act.pause(5000).perform();
+
+            // Capture current viewport
+            String base64Viewport = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BASE64);
+            byte[] decodedViewport = Base64.getDecoder().decode(base64Viewport);
+            BufferedImage viewportImage = ImageIO.read(new ByteArrayInputStream(decodedViewport));
+
+            // Add timestamp to viewport image
+            Graphics2D viewportGraphics = viewportImage.createGraphics();
+            viewportGraphics.setColor(Color.WHITE);
+            viewportGraphics.setFont(new Font("Arial", Font.BOLD, 12));
+            Date timestamp = new Date();
+            viewportGraphics.drawString(timestamp.toString(), 10, 20);
+            viewportGraphics.dispose();
+
+            // Calculate Y position to draw the viewport image
+            int yPosition = currentWindowScroll.intValue();
+            
+            // Draw the viewport image onto the full image
+            fullImageGraphics.drawImage(viewportImage, 0, yPosition, null);
+
+            // Increment scroll position
+            currentWindowScroll = currentWindowScroll + windowHeight;
+
+        } while (currentWindowScroll <= webpageHeight);
+
+        // Clean up graphics
+        fullImageGraphics.dispose();
+
+        // Reset scroll position
+        jsExec.executeScript("window.scrollTo(0, 0);");
+
+        // Convert the full image to Base64
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ImageIO.write(fullImage, "png", outputStream);
+        String base64String = Base64.getEncoder().encodeToString(outputStream.toByteArray());
+        
+        return base64String;
+
+    } catch (Exception e) {
+        ReportCommon reportDetails = new ReportCommon();
+        LocalDateTime startTime = LocalDateTime.now();
+        reportDetails.logExceptionDetails(driver, "Capturing Screenshot", "Capturing Screenshot", startTime, e);
+        return null;
+    }
+}
+
+==========================
+
