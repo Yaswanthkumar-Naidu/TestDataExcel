@@ -1,0 +1,32 @@
+byte [] imageBytes = IOUtils.toByteArray(new FileInputStream(destFile));
+			screenshotPath =  Base64.getEncoder().encodeToString(imageBytes);
+
+screenshotPath = getScreenShot(screenshotPath, driver);
+
+==================================
+private void logTestStep(ExtentTest parentNode, TestStepDetails ts) {
+		if (ts.testStepFormat == TestStepDetails.TestStepFormat.PLAIN) {
+			if (ts.screenShotData.isEmpty()) {
+				parentNode.log(ts.extentStatus, ts.stepName);
+			} else {
+				if(ts.extentStatus == Status.FAIL) {
+					if(!ts.getErrorMessage().isEmpty() && !ts.getErrorDetails().isEmpty()) {
+						try {
+							parentNode.log(ts.extentStatus, "STEP ACTION ==> " + ts.stepName + getAccurateDescription(ts.getStepDescription())+ "<br>" + 
+									"ERROR ==>" + ts.getErrorMessage() +"<br>" + 
+									"DETAIL LOGS ==>" + trimStackTrace(ts.getErrorDetails()) +"<br>",
+									MediaEntityBuilder.createScreenCaptureFromBase64String(ts.screenShotData).build());
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}		
+				}else{
+					try {
+						parentNode.log(ts.extentStatus, ts.stepName + " " + ts.getStepDescription() +"<br>",MediaEntityBuilder.createScreenCaptureFromBase64String(ts.screenShotData).build());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		} 
+	}
