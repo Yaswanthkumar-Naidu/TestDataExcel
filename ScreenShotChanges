@@ -112,3 +112,15 @@ public String getScreenShot(String screenshotPath, WebDriver driver)
 		
 	}
 ===========
+
+ try {
+            if (originalZoom != null) {
+                jsExec.executeScript("document.body.style.zoom='" + originalZoom + "'");
+            } else {
+                jsExec.executeScript("document.body.style.zoom='100%'");
+            }
+            jsExec.executeScript("document.body.style.transform=''");
+            
+        } catch (Exception e) {
+            logger.error("Failed to reset zoom: " + e.getMessage());
+        }
