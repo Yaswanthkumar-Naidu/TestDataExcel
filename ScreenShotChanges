@@ -1,0 +1,57 @@
+fullPageSS=Yes
+
+ TestRunSettings.setFullPageSS(prop.getProperty("fullPageSS"));
+
+private static String fullPageSS = "";
+
+	public static String getFullPageSS() {
+		return fullPageSS;
+	}
+
+	public static void setFullPageSS(String fullPageSS) {
+		TestRunSettings.fullPageSS = fullPageSS;
+	}
+
+ScreenshotCommon.captureFullPageScreenShot(driver, moduleName+"-"+screenName);			
+
+======================================
+private static int screenshotCounter = 1;
+	public static void captureFullPageScreenShot(WebDriver driver, String screenName)
+	{
+		if(TestRunSettings.getFullPageSS().equalsIgnoreCase("Yes")) {
+
+			String screenshotPath = createDirectory(TestRunSettings.getResultsPath(), "Screenshot_Capture");
+			String screenShotFileName=screenName + "_" + screenshotCounter + ".jpeg";
+			screenshotPath = screenshotPath + File.separator +screenShotFileName;
+
+			captureFullPageSS(driver,screenshotPath);
+
+			screenshotCounter++;
+		}
+
+	}
+	
+	public static void captureFullPageSS(WebDriver driver, String screenshotPath){
+	    try {
+	        JavascriptExecutor jsExec = (JavascriptExecutor) driver;
+	        jsExec.executeScript("window.scrollTo(0, 0);");
+	        Long viewportHeight = (Long) jsExec.executeScript("return window.innerHeight;");
+	        Long totalHeight = (Long) jsExec.executeScript("return document.documentElement.scrollHeight;");
+	        Long currentPosition = 0L;
+	        while (currentPosition < totalHeight) {
+	            File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+	            FileUtils.copyFile(screenshot, new File(screenshotPath));
+	            //getUniqueScreenshotPath(
+	            currentPosition += viewportHeight;
+	            if (currentPosition > totalHeight) {
+	                currentPosition = totalHeight;
+	            }
+	               jsExec.executeScript("window.scrollTo(0, " + currentPosition + ");");
+	            Thread.sleep(500);
+	        }
+	        jsExec.executeScript("window.scrollTo(0, 0);");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	}
+================================================================================
