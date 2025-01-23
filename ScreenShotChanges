@@ -55,59 +55,60 @@ private static int screenshotCounter = 1;
 	    }
 	}
 ================================================================================
+public String getScreenShot(String screenshotPath, WebDriver driver)
+	{
+		try {
+			
+			  JavascriptExecutor jsExec = (JavascriptExecutor) driver;
+		        
+		        Object originalZoom = jsExec.executeScript("return document.body.style.zoom;");
+		        
+		       try {
+		           
+		            jsExec.executeScript("document.body.style.zoom='50%'");
+		           
+		            jsExec.executeScript(
+		                "document.body.style.transform='scale(0.5)';" +
+		                "document.body.style.transformOrigin='0 0';"
+		            );
+		            
+		            Thread.sleep(1000);
+		            
+		        } catch (Exception e) {
+		        	logger.error(e.getMessage());
+		        }
+			
+			TakesScreenshot scrst = ((TakesScreenshot)driver);
 
-public static void captureFullPageSS(WebDriver driver, String screenshotPath) {
-    try {
-        JavascriptExecutor jsExec = (JavascriptExecutor) driver;
-        
-        // Scroll to top and reset
-        jsExec.executeScript("window.scrollTo(0, 0);");
-        
-        // Get viewport and page dimensions
-        Long viewportHeight = (Long) jsExec.executeScript("return window.innerHeight;");
-        Long totalHeight = (Long) jsExec.executeScript("return document.documentElement.scrollHeight;");
-        int viewportWidth = driver.manage().window().getSize().getWidth();
-        
-        // Create a new buffered image for full page
-        BufferedImage fullImage = new BufferedImage(
-            viewportWidth, 
-            totalHeight.intValue(), 
-            BufferedImage.TYPE_INT_RGB
-        );
-        
-        Graphics2D graphics = fullImage.createGraphics();
-        
-        Long currentPosition = 0L;
-        
-        while (currentPosition < totalHeight) {
-            // Capture viewport
-            File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-            BufferedImage portion = ImageIO.read(screenshot);
-            
-            // Draw the portion into the full image
-            graphics.drawImage(portion, 0, currentPosition.intValue(), null);
-            
-            // Scroll to next position
-            currentPosition += viewportHeight;
-            if (currentPosition > totalHeight) {
-                currentPosition = totalHeight;
-            }
-            
-            jsExec.executeScript("window.scrollTo(0, " + currentPosition + ");");
-            Thread.sleep(500); // Wait for any dynamic content
-        }
-        
-        // Dispose graphics
-        graphics.dispose();
-        
-        // Save the complete image
-        ImageIO.write(fullImage, "PNG", new File(screenshotPath));
-        
-        // Scroll back to top
-        jsExec.executeScript("window.scrollTo(0, 0);");
-        
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-}
+			Date timestamp = new Date();
+			// Call getScreenshotAs method to create an image file
+			File srcFile = scrst.getScreenshotAs(OutputType.FILE);
 
+			// Read the screenshot image
+	        BufferedImage image = ImageIO.read(srcFile);
+
+	        // Create a graphics context on the image
+	        Graphics2D graphics = image.createGraphics();
+
+	        // Set the timestamp on the image
+	        Font font = new Font("Arial", Font.BOLD, 24); // Adjust the font name and size as needed
+	        graphics.setFont(font);
+	        graphics.setColor(Color.RED);
+	        graphics.drawString(timestamp.toString(), 10, 20); // Adjust coordinates as needed
+
+			// Move image file to the new destination
+			File destFile = new File(screenshotPath);
+
+			ImageIO.write(image, "png", srcFile);
+			// Copy file at the destination
+			FileUtils.copyFile(srcFile, destFile);
+			byte [] imageBytes = IOUtils.toByteArray(new FileInputStream(destFile));
+			screenshotPath =  Base64.getEncoder().encodeToString(imageBytes);
+
+		}catch(Exception e) {
+			logger.error(e.getMessage());
+		}
+		return screenshotPath;
+		
+	}
+===========
