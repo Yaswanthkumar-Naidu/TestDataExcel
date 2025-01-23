@@ -55,3 +55,59 @@ private static int screenshotCounter = 1;
 	    }
 	}
 ================================================================================
+
+public static void captureFullPageSS(WebDriver driver, String screenshotPath) {
+    try {
+        JavascriptExecutor jsExec = (JavascriptExecutor) driver;
+        
+        // Scroll to top and reset
+        jsExec.executeScript("window.scrollTo(0, 0);");
+        
+        // Get viewport and page dimensions
+        Long viewportHeight = (Long) jsExec.executeScript("return window.innerHeight;");
+        Long totalHeight = (Long) jsExec.executeScript("return document.documentElement.scrollHeight;");
+        int viewportWidth = driver.manage().window().getSize().getWidth();
+        
+        // Create a new buffered image for full page
+        BufferedImage fullImage = new BufferedImage(
+            viewportWidth, 
+            totalHeight.intValue(), 
+            BufferedImage.TYPE_INT_RGB
+        );
+        
+        Graphics2D graphics = fullImage.createGraphics();
+        
+        Long currentPosition = 0L;
+        
+        while (currentPosition < totalHeight) {
+            // Capture viewport
+            File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+            BufferedImage portion = ImageIO.read(screenshot);
+            
+            // Draw the portion into the full image
+            graphics.drawImage(portion, 0, currentPosition.intValue(), null);
+            
+            // Scroll to next position
+            currentPosition += viewportHeight;
+            if (currentPosition > totalHeight) {
+                currentPosition = totalHeight;
+            }
+            
+            jsExec.executeScript("window.scrollTo(0, " + currentPosition + ");");
+            Thread.sleep(500); // Wait for any dynamic content
+        }
+        
+        // Dispose graphics
+        graphics.dispose();
+        
+        // Save the complete image
+        ImageIO.write(fullImage, "PNG", new File(screenshotPath));
+        
+        // Scroll back to top
+        jsExec.executeScript("window.scrollTo(0, 0);");
+        
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
