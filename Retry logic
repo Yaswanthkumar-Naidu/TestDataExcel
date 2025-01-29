@@ -275,5 +275,32 @@ public void selectDropdownValueByElement(WebDriver driver, WebElement element, L
     }
 }
 =====================
+public void waitElementToBeVisible(WebDriver drivernew, WebElement element) {
+    int maxRetries = 3;  // Maximum number of retry attempts
+    int retryCount = 0;  // Current retry count
+    int timeout = 20;    // Timeout in seconds
+    
+    while (retryCount < maxRetries) {
+        try {
+            WebDriverWait wait = new WebDriverWait(drivernew, Duration.ofSeconds(timeout));
+            wait.pollingEvery(Duration.ofMillis(500));
+            wait.until(ExpectedConditions.visibilityOf(element));
+            return; // Exit method if successful
+            
+        } catch (Exception e) {
+            retryCount++;
+            if (retryCount == maxRetries) {
+                System.out.println("Failed after " + maxRetries + " attempts. Element not visible.");
+                throw new RuntimeException("Element not visible after " + maxRetries + " attempts", e);
+            }
+            System.out.println("Retry attempt " + retryCount + " of " + maxRetries);
+            try {
+                Thread.sleep(1000); // Wait 1 second before retrying
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+}
 
 
