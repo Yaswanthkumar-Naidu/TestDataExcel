@@ -1,0 +1,18 @@
+<dependency>
+    <groupId>com.assertthat</groupId>
+    <artifactId>selenium-shutterbug</artifactId>
+    <version>1.6</version>
+</dependency>
+===========================
+public static String captureFullPageSS(WebDriver driver,String screenshotPath) {
+			
+			  BufferedImage screenshot = Shutterbug.shootPage(driver,Capture.FULL, 500, true)
+	                    .getImage();
+			  File destFile = new File(screenshotPath);
+			  try {
+				ImageIO.write(screenshot, "PNG", destFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return screenshotPath;
+		}
