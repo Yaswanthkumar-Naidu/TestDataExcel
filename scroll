@@ -1,0 +1,14 @@
+public void scrollToBottom() {
+    long lastHeight = (long) ((JavascriptExecutor) driver).executeScript("return document.documentElement.scrollHeight");
+    
+    while (true) {
+        ((JavascriptExecutor) driver).executeScript("window.scrollTo(0, document.documentElement.scrollHeight);");
+        Thread.sleep(2000); // Wait for content to load
+        
+        long newHeight = (long) ((JavascriptExecutor) driver).executeScript("return document.documentElement.scrollHeight");
+        if (newHeight == lastHeight) {
+            break;
+        }
+        lastHeight = newHeight;
+    }
+}
