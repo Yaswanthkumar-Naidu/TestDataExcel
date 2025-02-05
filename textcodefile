@@ -1,4 +1,14 @@
 
+if(ts.extentStatus == Status.FAIL) {
+					if(!ts.getErrorMessage().isEmpty() && !ts.getErrorDetails().isEmpty()) {
+						parentNode.log(ts.extentStatus, writeImageToReport(ts.screenShotData,"STEP ACTION ==> " + ts.stepName + getAccurateDescription(ts.getStepDescription())+ "<br>" + 
+								"ERROR ==>" + ts.getErrorMessage() +"<br>" + 
+								"DETAIL LOGS ==>" + trimStackTrace(ts.getErrorDetails())));
+					}		
+				}else{
+					parentNode.log(ts.extentStatus, writeImageToReport(ts.screenShotData, ts.stepName + " " + ts.getStepDescription()));
+======================
+
 public void Select(WebDriver _driver, WebElement element, SelectType type, String options, TestCaseParam testCaseParam, PageDetails pageDetails) throws Exception {
  
         String Action = "Select dropdown Value:" + options;
