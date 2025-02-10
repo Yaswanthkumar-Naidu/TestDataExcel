@@ -1,19 +1,22 @@
-	public void uploadDoc(WebDriver driver,String filePath) {
+public void uploadDocument( String scriptIteration, String pomIteration) throws AWTException {		PageDetails action = new PageDetails();
+		action.setPageActionName("Upload Document");
+		action.setPageActionDescription("Upload New Document");
 		
-		WebDriverWait wait = new WebDriverWait(driver,TIME_OUT);
-		JavascriptExecutor js = (JavascriptExecutor) driver;
-
-		WebElement uploadButton = wait.until(ExpectedConditions.elementToBeClickable(
-				By.xpath("//span[contains(@class, 'slds-file-selector__button')]//lightning-primitive-icon")));
-
-		WebElement parentContainer = uploadButton.findElement(By.xpath("./ancestor::div[contains(@class, 'slds-file-selector')]"));
-		WebElement fileInput = parentContainer.findElement(By.cssSelector("input[type='file']"));
-
-		js.executeScript(
-				"arguments[0].style.display = 'block'; " +
-						"arguments[0].style.visibility = 'visible'; " +
-						"arguments[0].style.opacity = '1';", fileInput);
-
-		fileInput.sendKeys(filePath);
-		pauseDelay();
+		Map<String, ArrayList<String>>	testCaseDataSd = util.getScreenTCData(screenName, testCaseParam.getTestNGTestMethodName(),TestRunSettings.getTestDataPath(), TestRunSettings.getTestDataMappingFileName() ,TestRunSettings.getTestDataMappingSheetNameSd(),scriptIteration,pomIteration);
+		Webkeywords.instance().scrollUpPageToTheTop(driver);
+		Webkeywords.instance().pauseDelay();
+		Webkeywords.instance().click(driver, genericLocators.button(driver, "New", testCaseDataSd.get("NEW").get(0)), testCaseDataSd.get("NEW").get(0), action);
+		Webkeywords.instance().selectInputDropdownValue(driver,testCaseDataSd.get("DOCUMENT_CATEGORY").get(0),"Document Category",action);
+		Webkeywords.instance().selectDropdownValueByElement(driver,documentType,documentTypeList,testCaseDataSd.get("DOCUMENT_TYPE").get(0),"Document Type",action);
+		Webkeywords.instance().selectInputDropdownValue(driver,testCaseDataSd.get("DOCUMENT_STATUS").get(0),"Document Status",action);
+		Webkeywords.instance().setText(driver, genericLocators.textarea(driver, "Description",testCaseDataSd.get("DESCRIPTION").get(0)), "AutoDescription_" + util.getRandom(testCaseDataSd.get("DESCRIPTION").get(0)), action);
+		//Webkeywords.instance().jsClick(driver,uploadfiles );
+		
+		String filePath = TestRunSettings.getUploadFilePath() + File.separator+ testCaseDataSd.get("UPLOAD_DOCUMENT").get(0);
+	
+		Webkeywords.instance().uploadFile(driver,filePath);
+	    //uploadFile(filePath);
+		ScreenshotCommon.captureFullPageScreenShot(driver, moduleName+"-"+screenName);
+		Webkeywords.instance().waitElementClickable(driver, genericLocators.button(driver, "Save",testCaseDataSd.get("SAVE").get(0)));
+		Webkeywords.instance().jsClick(driver,genericLocators.button(driver, "Save", testCaseDataSd.get("SAVE").get(0)),testCaseDataSd.get("SAVE").get(0), action);
 	}
