@@ -1,0 +1,10 @@
+ JavascriptExecutor js = (JavascriptExecutor) driver;
+        WebElement fileInput = wait.until(ExpectedConditions.presenceOfElementLocated(
+            By.cssSelector("input[type='file']")));
+            
+        // Make hidden input visible
+        js.executeScript("arguments[0].style.display='block';", fileInput);
+        js.executeScript("arguments[0].style.visibility='visible';", fileInput);
+        
+        // Send the file path
+        fileInput.sendKeys(filePath);
