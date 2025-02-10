@@ -8,3 +8,7 @@
         
         // Send the file path
         fileInput.sendKeys(filePath);
+==============================================
+ WebElement fileInput2 = driver.findElement(
+            By.cssSelector(".slds-file-selector__input, .fileInput, .inputFile"));
+        fileInput2.sendKeys(filePath);
