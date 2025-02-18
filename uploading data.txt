@@ -1,3 +1,11 @@
+
+Webkeywords.instance().setDateText(driver,
+				genericLocators.datetextbox(driver,"Start Date", testCaseDataSd.get("START_DATE").get(0)), CommonOperations.getDate("M/d/yyyy", testCaseDataSd.get("START_DATE").get(0)), action);
+		Webkeywords.instance().setDateText(driver,
+				genericLocators.datetextbox(driver,"End Date", testCaseDataSd.get("END_DATE").get(0)), CommonOperations.getDate("M/d/yyyy", testCaseDataSd.get("END_DATE").get(0)), action);
+		Webkeywords.instance().setDateText(driver,
+				genericLocators.datetextbox(driver,"Start Date", testCaseDataSd.get("SYSTEM_CLOSED").get(0)), CommonOperations.getDate("M/d/yyyy", testCaseDataSd.get("SYSTEM_CLOSED").get(0)), action);
+=================================
 public void uploadFile(WebDriver driver,String filePath) {
 		
 		WebDriverWait wait = new WebDriverWait(driver,TIME_OUT);
