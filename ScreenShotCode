@@ -1,3 +1,16 @@
+
+
+
+
+parentNode.log(ts.extentStatus, "STEP ACTION ==> " + ts.stepName + getAccurateDescription(ts.getStepDescription())+ "<br>" + 
+"ERROR ==>" + ts.getErrorMessage() +"<br>" + "DETAIL LOGS ==>" + trimStackTrace(ts.getErrorDetails()) +"<br>",
+MediaEntityBuilder.createScreenCaptureFromBase64String(ts.screenShotData).build());
+
+
+else
+
+parentNode.log(ts.extentStatus, ts.stepName + " " + ts.getStepDescription() +"<br>",MediaEntityBuilder.createScreenCaptureFromBase64String(ts.screenShotData).build());
+=======
 <dependency>
     <groupId>com.assertthat</groupId>
     <artifactId>selenium-shutterbug</artifactId>
