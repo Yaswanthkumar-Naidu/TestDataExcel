@@ -1,0 +1,467 @@
+package cares.cwds.salesforce.pom.courts;
+
+import static java.lang.String.format;
+
+import java.util.ArrayList;
+import java.util.Map;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.How;
+import org.openqa.selenium.support.PageFactory;
+
+import cares.cwds.salesforce.constants.ModuleConstants;
+import cares.cwds.salesforce.constants.SalesforceConstants;
+import cares.cwds.salesforce.constants.ScreenConstants;
+import cares.cwds.salesforce.utilities.common.TestRunSettings;
+import cares.cwds.salesforce.utilities.common.Util;
+import cares.cwds.salesforce.utilities.reports.common.ReportCommon;
+import cares.cwds.salesforce.utilities.reports.extentmodel.PageDetails;
+import cares.cwds.salesforce.utilities.reports.model.TestCaseParam;
+import cares.cwds.salesforce.utilities.testng.TestNGCommon;
+import cares.cwds.salesforce.utilities.web.GenericLocators;
+import cares.cwds.salesforce.utilities.web.Webkeywords;
+
+public class Participants {
+	
+	private WebDriver driver;
+	ReportCommon exceptionDetails = new ReportCommon();
+	Util util = new Util();
+	GenericLocators genericLocators = null;
+	TestNGCommon testngCommon = new TestNGCommon();
+	TestCaseParam testCaseParam = (TestCaseParam) testngCommon.getTestAttribute("testCaseParam");
+	String moduleName = ModuleConstants.COURTS;
+	String screenName = ScreenConstants.PARTICIPANTS;
+
+	public Participants(WebDriver wDriver)
+	{
+		initializePage(wDriver);
+	}
+
+	public void initializePage(WebDriver wDriver) 
+    {
+    	 driver = wDriver;
+         PageFactory.initElements(driver, this);
+         ReportCommon testStepLogDetails = new ReportCommon(); 
+         testStepLogDetails.logModuleAndScreenDetails( moduleName, screenName);
+         genericLocators = new GenericLocators(wDriver);
+    }
+	String columnHeader = "//table[@aria-label='%s']/thead/tr/th[@*='%s']//span/a/span[2]";
+	
+	@FindBy(how = How.XPATH, using = "(//*[contains(@class,'kreator-labeloverrideclass Lookup1 kreator_lookup_readonly_space_align slds-form-element')])[2]")
+	public WebElement courtWorkItemId;
+	
+	@FindBy(how = How.XPATH, using = "(//*[contains(@class,'kreator-labeloverrideclass Lookup2 kreator_lookup_readonly_space_align slds-form-element')])[2]")
+	public WebElement personInvolvedId;
+	
+	@FindBy(how = How.XPATH, using = "//button[contains(@class,'-accordion__summary-action')]")
+	public WebElement participantaccordian;
+	
+	@FindBy(how = How.XPATH, using = "(//lightning-icon[contains(@class,'Collapse-Accordion-Section-1-AccordionGroup1 slds-float_right collapse-expand-icon kreatorIcon slds-icon-utility-chevrondown slds-icon_container')])[5]")
+	public WebElement participantdropDownOption;
+	
+	@FindBy(how = How.XPATH, using = "//label[text()='Select Participants']")
+	public WebElement selectParticipants;
+	 
+	@FindBy(how = How.XPATH, using = "//label[text()='Select Children']")
+	public WebElement selectChildrenTextBox;
+
+	@FindBy(how = How.XPATH, using = "(//label[text()='Select Participants'])[2]")
+	public WebElement selectParticipantsTextBox;
+
+	String participant = "(//span[text()='%s'])[2]";
+
+	public void navigateToParticipants(String scriptIteration, String pomIteration){
+
+		PageDetails action = new PageDetails();
+		action.setPageActionName("Navigate to Participants");
+		action.setPageActionDescription("Navigate to Participants");
+
+		Map<String, ArrayList<String>>	testCaseDataSd = util.getScreenTCData(screenName, testCaseParam.getTestNGTestMethodName(),TestRunSettings.getTestDataPath(), TestRunSettings.getTestDataMappingFileName() ,TestRunSettings.getTestDataMappingSheetNameSd(),scriptIteration,pomIteration);
+
+		Webkeywords.instance().click(driver, genericLocators.button(driver, "Participants", testCaseDataSd.get("PARTICIPANTS").get(0)), testCaseDataSd.get("PARTICIPANTS").get(0),action);
+		Webkeywords.instance().pause();
+     }
+	
+	public void verifyParticipantsRelatedList(String scriptIteration, String pomIteration){
+
+		PageDetails action = new PageDetails();
+		action.setPageActionName("Validate Participants Related List");
+		action.setPageActionDescription("Validate Participants Related List");
+
+		Map<String, ArrayList<String>>	testCaseDataSd = util.getScreenTCData(screenName, testCaseParam.getTestNGTestMethodName(),TestRunSettings.getTestDataPath(), TestRunSettings.getTestDataMappingFileName() ,TestRunSettings.getTestDataMappingSheetNameSd(),scriptIteration,pomIteration);
+
+		Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver,"Child(ren)",testCaseDataSd.get("CHILD_REN").get(0)), testCaseDataSd.get("CHILD_REN").get(0), action);
+		Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver,"Court Work Item Participant",testCaseDataSd.get("COURT_WORK_ITEM_PARTICIPANT").get(0)), testCaseDataSd.get("COURT_WORK_ITEM_PARTICIPANT").get(0), action);
+		Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver,"Pick Focus Child",testCaseDataSd.get("VERIFY_PICK_FOCUS_CHILD").get(0)), testCaseDataSd.get("VERIFY_PICK_FOCUS_CHILD").get(0), action);
+		Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver,"Pick Participants",testCaseDataSd.get("VERIFY_PICK_PARTICIPANT").get(0)), testCaseDataSd.get("VERIFY_PICK_PARTICIPANT").get(0), action);
+     }
+	
+	public void addFocusChild(String scriptIteration, String pomIteration){
+
+		PageDetails action = new PageDetails();
+		action.setPageActionName("Click Pick Focus Child");
+		action.setPageActionDescription("Click Pick Focus Child");
+
+		Map<String, ArrayList<String>>	testCaseDataSd = util.getScreenTCData(screenName, testCaseParam.getTestNGTestMethodName(),TestRunSettings.getTestDataPath(), TestRunSettings.getTestDataMappingFileName() ,TestRunSettings.getTestDataMappingSheetNameSd(),scriptIteration,pomIteration);
+	
+		SalesforceConstants.getCurrentPageUrl(driver,"HEARINGCOURTWORKITEM");
+		Webkeywords.instance().click(driver, genericLocators.button(driver, "Pick Focus Child", testCaseDataSd.get("PICK_FOCUS_CHILD_BTN").get(0)), testCaseDataSd.get("PICK_FOCUS_CHILD_BTN").get(0),action);
+		Webkeywords.instance().pause();
+		
+		Webkeywords.instance().click(driver, selectChildrenTextBox, testCaseDataSd.get("SELECT_CHILDREN").get(0),action);
+	    Webkeywords.instance().pauseDelay();
+		Webkeywords.instance().click(driver, genericLocators.link(driver, SalesforceConstants.getObjectValue("CASE_PERSON_MAP").get("Victim1")[1],testCaseDataSd.get("SELECT_CHILDREN").get(0)),testCaseDataSd.get("SELECT_CHILDREN").get(0),action);
+	
+		Webkeywords.instance().click(driver, genericLocators.button(driver, "Save",testCaseDataSd.get("SAVE_BTN").get(0)),testCaseDataSd.get("SAVE_BTN").get(0),action);
+		Webkeywords.instance().pause();
+    }
+	
+	public void verifyHeaderColumnsInParticipantsForChildren(String scriptIteration, String pomIteration) {
+		PageDetails action = new PageDetails();
+		action.setPageActionName("verifying Document List Fields");
+		action.setPageActionDescription("verifying Document List Fields");
+
+		Map<String, ArrayList<String>>	testCaseDataSd = util.getScreenTCData(screenName, testCaseParam.getTestNGTestMethodName(),TestRunSettings.getTestDataPath(),
+				TestRunSettings.getTestDataMappingFileName() ,TestRunSettings.getTestDataMappingSheetNameSd(),scriptIteration,pomIteration);
+
+		Webkeywords.instance().scrollUpPageToTheTop(driver);    
+		Webkeywords.instance().pause();
+		Webkeywords.instance().verifyElementDisplayed(driver, getElementBasedOnFlag(testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_ID_VERIFY").get(0),columnHeader,"Child(ren)","Court Work Item Participant: Court Work Item Participant ID"), testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_ID_VERIFY").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, getElementBasedOnFlag(testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_PARTICIPANT_VERIFY").get(0),columnHeader,"Child(ren)","Court Work Item Participant: Participant"), testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_PARTICIPANT_VERIFY").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, getElementBasedOnFlag(testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_ROLE_VERIFY").get(0),columnHeader,"Child(ren)","Court Work Item Participant: Role"), testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_ROLE_VERIFY").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, getElementBasedOnFlag(testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_DOB_VERIFY").get(0),columnHeader,"Child(ren)","Person Involved: Date of Birth"), testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_DOB_VERIFY").get(0), action);
+
+	}
+	
+	public void addPickParticipant(String scriptIteration, String pomIteration){
+
+		PageDetails action = new PageDetails();
+		action.setPageActionName("Click Pick Participant");
+		action.setPageActionDescription("Click Pick Participant");
+
+		Map<String, ArrayList<String>>	testCaseDataSd = util.getScreenTCData(screenName, testCaseParam.getTestNGTestMethodName(),TestRunSettings.getTestDataPath(), TestRunSettings.getTestDataMappingFileName() ,TestRunSettings.getTestDataMappingSheetNameSd(),scriptIteration,pomIteration);
+	
+		Webkeywords.instance().click(driver, genericLocators.button(driver, "Pick Participants", testCaseDataSd.get("PICK_PARTICIPANT_BTN").get(0)), testCaseDataSd.get("PICK_PARTICIPANT_BTN").get(0),action);
+		Webkeywords.instance().pause();
+	
+		String person = SalesforceConstants.getObjectValue("CASE_PERSON_MAP").get("Victim1")[1];
+		String formatedXpath = format(participant,person);
+		WebElement scpIdXpath = driver.findElement(By.xpath(formatedXpath));
+		Webkeywords.instance().click(driver, scpIdXpath, testCaseDataSd.get("SELECT_PARTICIPANT").get(0),action);
+		Webkeywords.instance().pauseDelay();
+		Webkeywords.instance().click(driver, selectParticipantsTextBox, testCaseDataSd.get("SELECT_PARTICIPANT").get(0),action);		
+		Webkeywords.instance().pauseDelay();
+		Webkeywords.instance().click(driver, genericLocators.link(driver, SalesforceConstants.getObjectValue("CASE_PERSON_MAP").get("Perpetrator1")[1],testCaseDataSd.get("SELECT_PARTICIPANT").get(0)),testCaseDataSd.get("SELECT_PARTICIPANT").get(0),action);	  	
+		Webkeywords.instance().click(driver, genericLocators.button(driver, "Save",testCaseDataSd.get("SAVE_BTN").get(0)),testCaseDataSd.get("SAVE_BTN").get(0),action);
+		Webkeywords.instance().pause();
+	
+	}
+	
+	public void verifyHeaderColumnsInParticipantsForWorkItem (String scriptIteration, String pomIteration) {
+		PageDetails action = new PageDetails();
+		action.setPageActionName("verifying Current Case Assignments Fields");
+		action.setPageActionDescription("verifying Current Case Assignments Fields");
+		
+		Map<String, ArrayList<String>>	testCaseDataSd = util.getScreenTCData(screenName, testCaseParam.getTestNGTestMethodName(),TestRunSettings.getTestDataPath(),
+					TestRunSettings.getTestDataMappingFileName() ,TestRunSettings.getTestDataMappingSheetNameSd(),scriptIteration,pomIteration);
+		
+		Webkeywords.instance().verifyElementDisplayed(driver, getElementBasedOnFlag(testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_ID_VERIFY_WORKITEM").get(0),columnHeader,"Court Work Item Participant","Court Work Item Participant: Court Work Item Participant ID"), testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_ID_VERIFY_WORKITEM").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, getElementBasedOnFlag(testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_PARTICIPANT_VERIFY_WORKITEM").get(0),columnHeader,"Court Work Item Participant","Court Work Item Participant: Participant"), testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_PARTICIPANT_VERIFY_WORKITEM").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, getElementBasedOnFlag(testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_ROLE_VERIFY_WORKITEM").get(0),columnHeader,"Court Work Item Participant","Court Work Item Participant: Role"), testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_ROLE_VERIFY_WORKITEM").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, getElementBasedOnFlag(testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_DOB_VERIFY_WORKITEM").get(0),columnHeader,"Court Work Item Participant","Court Work Item Participant: Date of Birth"), testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_DOB_VERIFY_WORKITEM").get(0), action);
+	}
+
+	
+	public WebElement getElementBasedOnFlag(String flag, String columnHeaderXpath, String tableName, String columnName) {
+		if(!(flag.equalsIgnoreCase("n/a"))) {
+			return driver.findElement(By.xpath(format(columnHeaderXpath,tableName,columnName)));
+		}
+		else
+			return null;
+	}
+	
+
+	
+	public void validatePetitionParticipantDetailsPage(String scriptIteration, String pomIteration)  {
+		PageDetails action = new PageDetails();
+		action.setPageActionName("Validate Petition Participant Details Page");
+		action.setPageActionDescription("Validate Petition Participant Details Page");
+		
+		Map<String, ArrayList<String>>	testCaseDataSd = util.getScreenTCData(screenName, testCaseParam.getTestNGTestMethodName(),TestRunSettings.getTestDataPath(), TestRunSettings.getTestDataMappingFileName() ,TestRunSettings.getTestDataMappingSheetNameSd(),scriptIteration,pomIteration);
+		
+		
+		Webkeywords.instance().verifyElementDisplayed(driver, genericLocators.textbox(driver, "Role", testCaseDataSd.get("ROLE_VERIFY").get(0)), testCaseDataSd.get("MIDDLE_NAME_VERIFY").get(0), action);
+		
+		Webkeywords.instance().verifyElementDisplayed(driver, genericLocators.textOnPage(driver, "Participant", testCaseDataSd.get("PARTICIPANT_VERIFY").get(0)) , testCaseDataSd.get("PARTICIPANT_VERIFY").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, genericLocators.textOnPage(driver, "Hearing Attendance", testCaseDataSd.get("PARTICIPANT_VERIFY").get(0)) , testCaseDataSd.get("PARTICIPANT_VERIFY").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, genericLocators.textOnPage(driver, "Court Work Item ID", testCaseDataSd.get("WORK_ITEM_ID_VERIFY").get(0)) , testCaseDataSd.get("WORK_ITEM_ID_VERIFY").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, genericLocators.textOnPage(driver, "Person Involved", testCaseDataSd.get("PERSON_INVOLVED").get(0)) , testCaseDataSd.get("PERSON_INVOLVED").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, genericLocators.textOnPage(driver, "Created By", testCaseDataSd.get("CREATED_BY_VERIFY").get(0)) , testCaseDataSd.get("CREATED_BY_VERIFY").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, genericLocators.textOnPage(driver, "Modified By", testCaseDataSd.get("MODIFIED_BY_VERIFY").get(0)) , testCaseDataSd.get("MODIFIED_BY_VERIFY").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, courtWorkItemId, testCaseDataSd.get("BIRTHDATE_VERIFY").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, personInvolvedId, testCaseDataSd.get("BIRTHDATE_VERIFY").get(0), action);
+
+		
+		Webkeywords.instance().verifyElementDisplayed(driver, genericLocators.dropdown(driver,"Attendance Type",testCaseDataSd.get("ATTENDANCE_TYPE_VERIFY").get(0)),testCaseDataSd.get("ATTENDANCE_TYPE_VERIFY").get(0),action);
+		
+		
+	}
+	
+	public void addPickParticipantForPetitionRecord(String scriptIteration, String pomIteration){
+
+		PageDetails action = new PageDetails();
+		action.setPageActionName("Click Pick Participant");
+		action.setPageActionDescription("Click Pick Participant");
+
+		Map<String, ArrayList<String>>	testCaseDataSd = util.getScreenTCData(screenName, testCaseParam.getTestNGTestMethodName(),TestRunSettings.getTestDataPath(), TestRunSettings.getTestDataMappingFileName() ,TestRunSettings.getTestDataMappingSheetNameSd(),scriptIteration,pomIteration);
+	
+		Webkeywords.instance().click(driver, genericLocators.button(driver, "Pick Participants", testCaseDataSd.get("PICK_PARTICIPANT_BTN").get(0)), testCaseDataSd.get("PICK_PARTICIPANT_BTN").get(0),action);
+		Webkeywords.instance().pause();
+	
+		Webkeywords.instance().jsClick(driver, participantaccordian, testCaseDataSd.get("SELECT_PARTICIPANT").get(0),action);
+		Webkeywords.instance().pauseDelay();
+		Webkeywords.instance().click(driver, selectParticipants, testCaseDataSd.get("SELECT_PARTICIPANT").get(0),action);		
+		Webkeywords.instance().pauseDelay();
+		Webkeywords.instance().click(driver, genericLocators.link(driver, SalesforceConstants.getObjectValue("CASE_PERSON_MAP").get("Perpetrator1")[1],testCaseDataSd.get("SELECT_PARTICIPANT").get(0)),testCaseDataSd.get("SELECT_PARTICIPANT").get(0),action);	  	
+		Webkeywords.instance().click(driver, genericLocators.button(driver, "Save",testCaseDataSd.get("SAVE_BTN").get(0)),testCaseDataSd.get("SAVE_BTN").get(0),action);
+		
+	
+	}
+
+}package cares.cwds.salesforce.pom.courts;
+
+import static java.lang.String.format;
+
+import java.util.ArrayList;
+import java.util.Map;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.How;
+import org.openqa.selenium.support.PageFactory;
+
+import cares.cwds.salesforce.constants.ModuleConstants;
+import cares.cwds.salesforce.constants.SalesforceConstants;
+import cares.cwds.salesforce.constants.ScreenConstants;
+import cares.cwds.salesforce.utilities.common.TestRunSettings;
+import cares.cwds.salesforce.utilities.common.Util;
+import cares.cwds.salesforce.utilities.reports.common.ReportCommon;
+import cares.cwds.salesforce.utilities.reports.extentmodel.PageDetails;
+import cares.cwds.salesforce.utilities.reports.model.TestCaseParam;
+import cares.cwds.salesforce.utilities.testng.TestNGCommon;
+import cares.cwds.salesforce.utilities.web.GenericLocators;
+import cares.cwds.salesforce.utilities.web.Webkeywords;
+
+public class Participants {
+	
+	private WebDriver driver;
+	ReportCommon exceptionDetails = new ReportCommon();
+	Util util = new Util();
+	GenericLocators genericLocators = null;
+	TestNGCommon testngCommon = new TestNGCommon();
+	TestCaseParam testCaseParam = (TestCaseParam) testngCommon.getTestAttribute("testCaseParam");
+	String moduleName = ModuleConstants.COURTS;
+	String screenName = ScreenConstants.PARTICIPANTS;
+
+	public Participants(WebDriver wDriver)
+	{
+		initializePage(wDriver);
+	}
+
+	public void initializePage(WebDriver wDriver) 
+    {
+    	 driver = wDriver;
+         PageFactory.initElements(driver, this);
+         ReportCommon testStepLogDetails = new ReportCommon(); 
+         testStepLogDetails.logModuleAndScreenDetails( moduleName, screenName);
+         genericLocators = new GenericLocators(wDriver);
+    }
+	String columnHeader = "//table[@aria-label='%s']/thead/tr/th[@*='%s']//span/a/span[2]";
+	
+	@FindBy(how = How.XPATH, using = "(//*[contains(@class,'kreator-labeloverrideclass Lookup1 kreator_lookup_readonly_space_align slds-form-element')])[2]")
+	public WebElement courtWorkItemId;
+	
+	@FindBy(how = How.XPATH, using = "(//*[contains(@class,'kreator-labeloverrideclass Lookup2 kreator_lookup_readonly_space_align slds-form-element')])[2]")
+	public WebElement personInvolvedId;
+	
+	@FindBy(how = How.XPATH, using = "//button[contains(@class,'-accordion__summary-action')]")
+	public WebElement participantaccordian;
+	
+	@FindBy(how = How.XPATH, using = "(//lightning-icon[contains(@class,'Collapse-Accordion-Section-1-AccordionGroup1 slds-float_right collapse-expand-icon kreatorIcon slds-icon-utility-chevrondown slds-icon_container')])[5]")
+	public WebElement participantdropDownOption;
+	
+	@FindBy(how = How.XPATH, using = "//label[text()='Select Participants']")
+	public WebElement selectParticipants;
+	 
+	@FindBy(how = How.XPATH, using = "//label[text()='Select Children']")
+	public WebElement selectChildrenTextBox;
+
+	@FindBy(how = How.XPATH, using = "(//label[text()='Select Participants'])[2]")
+	public WebElement selectParticipantsTextBox;
+
+	String participant = "(//span[text()='%s'])[2]";
+
+	public void navigateToParticipants(String scriptIteration, String pomIteration){
+
+		PageDetails action = new PageDetails();
+		action.setPageActionName("Navigate to Participants");
+		action.setPageActionDescription("Navigate to Participants");
+
+		Map<String, ArrayList<String>>	testCaseDataSd = util.getScreenTCData(screenName, testCaseParam.getTestNGTestMethodName(),TestRunSettings.getTestDataPath(), TestRunSettings.getTestDataMappingFileName() ,TestRunSettings.getTestDataMappingSheetNameSd(),scriptIteration,pomIteration);
+
+		Webkeywords.instance().click(driver, genericLocators.button(driver, "Participants", testCaseDataSd.get("PARTICIPANTS").get(0)), testCaseDataSd.get("PARTICIPANTS").get(0),action);
+		Webkeywords.instance().pause();
+     }
+	
+	public void verifyParticipantsRelatedList(String scriptIteration, String pomIteration){
+
+		PageDetails action = new PageDetails();
+		action.setPageActionName("Validate Participants Related List");
+		action.setPageActionDescription("Validate Participants Related List");
+
+		Map<String, ArrayList<String>>	testCaseDataSd = util.getScreenTCData(screenName, testCaseParam.getTestNGTestMethodName(),TestRunSettings.getTestDataPath(), TestRunSettings.getTestDataMappingFileName() ,TestRunSettings.getTestDataMappingSheetNameSd(),scriptIteration,pomIteration);
+
+		Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver,"Child(ren)",testCaseDataSd.get("CHILD_REN").get(0)), testCaseDataSd.get("CHILD_REN").get(0), action);
+		Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver,"Court Work Item Participant",testCaseDataSd.get("COURT_WORK_ITEM_PARTICIPANT").get(0)), testCaseDataSd.get("COURT_WORK_ITEM_PARTICIPANT").get(0), action);
+		Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver,"Pick Focus Child",testCaseDataSd.get("VERIFY_PICK_FOCUS_CHILD").get(0)), testCaseDataSd.get("VERIFY_PICK_FOCUS_CHILD").get(0), action);
+		Webkeywords.instance().verifyTextDisplayed(driver, genericLocators.textOnPage(driver,"Pick Participants",testCaseDataSd.get("VERIFY_PICK_PARTICIPANT").get(0)), testCaseDataSd.get("VERIFY_PICK_PARTICIPANT").get(0), action);
+     }
+	
+	public void addFocusChild(String scriptIteration, String pomIteration){
+
+		PageDetails action = new PageDetails();
+		action.setPageActionName("Click Pick Focus Child");
+		action.setPageActionDescription("Click Pick Focus Child");
+
+		Map<String, ArrayList<String>>	testCaseDataSd = util.getScreenTCData(screenName, testCaseParam.getTestNGTestMethodName(),TestRunSettings.getTestDataPath(), TestRunSettings.getTestDataMappingFileName() ,TestRunSettings.getTestDataMappingSheetNameSd(),scriptIteration,pomIteration);
+	
+		SalesforceConstants.getCurrentPageUrl(driver,"HEARINGCOURTWORKITEM");
+		Webkeywords.instance().click(driver, genericLocators.button(driver, "Pick Focus Child", testCaseDataSd.get("PICK_FOCUS_CHILD_BTN").get(0)), testCaseDataSd.get("PICK_FOCUS_CHILD_BTN").get(0),action);
+		Webkeywords.instance().pause();
+		
+		Webkeywords.instance().click(driver, selectChildrenTextBox, testCaseDataSd.get("SELECT_CHILDREN").get(0),action);
+	    Webkeywords.instance().pauseDelay();
+		Webkeywords.instance().click(driver, genericLocators.link(driver, SalesforceConstants.getObjectValue("CASE_PERSON_MAP").get("Victim1")[1],testCaseDataSd.get("SELECT_CHILDREN").get(0)),testCaseDataSd.get("SELECT_CHILDREN").get(0),action);
+	
+		Webkeywords.instance().click(driver, genericLocators.button(driver, "Save",testCaseDataSd.get("SAVE_BTN").get(0)),testCaseDataSd.get("SAVE_BTN").get(0),action);
+		Webkeywords.instance().pause();
+    }
+	
+	public void verifyHeaderColumnsInParticipantsForChildren(String scriptIteration, String pomIteration) {
+		PageDetails action = new PageDetails();
+		action.setPageActionName("verifying Document List Fields");
+		action.setPageActionDescription("verifying Document List Fields");
+
+		Map<String, ArrayList<String>>	testCaseDataSd = util.getScreenTCData(screenName, testCaseParam.getTestNGTestMethodName(),TestRunSettings.getTestDataPath(),
+				TestRunSettings.getTestDataMappingFileName() ,TestRunSettings.getTestDataMappingSheetNameSd(),scriptIteration,pomIteration);
+
+		Webkeywords.instance().scrollUpPageToTheTop(driver);    
+		Webkeywords.instance().pause();
+		Webkeywords.instance().verifyElementDisplayed(driver, getElementBasedOnFlag(testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_ID_VERIFY").get(0),columnHeader,"Child(ren)","Court Work Item Participant: Court Work Item Participant ID"), testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_ID_VERIFY").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, getElementBasedOnFlag(testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_PARTICIPANT_VERIFY").get(0),columnHeader,"Child(ren)","Court Work Item Participant: Participant"), testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_PARTICIPANT_VERIFY").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, getElementBasedOnFlag(testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_ROLE_VERIFY").get(0),columnHeader,"Child(ren)","Court Work Item Participant: Role"), testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_ROLE_VERIFY").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, getElementBasedOnFlag(testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_DOB_VERIFY").get(0),columnHeader,"Child(ren)","Person Involved: Date of Birth"), testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_DOB_VERIFY").get(0), action);
+
+	}
+	
+	public void addPickParticipant(String scriptIteration, String pomIteration){
+
+		PageDetails action = new PageDetails();
+		action.setPageActionName("Click Pick Participant");
+		action.setPageActionDescription("Click Pick Participant");
+
+		Map<String, ArrayList<String>>	testCaseDataSd = util.getScreenTCData(screenName, testCaseParam.getTestNGTestMethodName(),TestRunSettings.getTestDataPath(), TestRunSettings.getTestDataMappingFileName() ,TestRunSettings.getTestDataMappingSheetNameSd(),scriptIteration,pomIteration);
+	
+		Webkeywords.instance().click(driver, genericLocators.button(driver, "Pick Participants", testCaseDataSd.get("PICK_PARTICIPANT_BTN").get(0)), testCaseDataSd.get("PICK_PARTICIPANT_BTN").get(0),action);
+		Webkeywords.instance().pause();
+	
+		String person = SalesforceConstants.getObjectValue("CASE_PERSON_MAP").get("Victim1")[1];
+		String formatedXpath = format(participant,person);
+		WebElement scpIdXpath = driver.findElement(By.xpath(formatedXpath));
+		Webkeywords.instance().click(driver, scpIdXpath, testCaseDataSd.get("SELECT_PARTICIPANT").get(0),action);
+		Webkeywords.instance().pauseDelay();
+		Webkeywords.instance().click(driver, selectParticipantsTextBox, testCaseDataSd.get("SELECT_PARTICIPANT").get(0),action);		
+		Webkeywords.instance().pauseDelay();
+		Webkeywords.instance().click(driver, genericLocators.link(driver, SalesforceConstants.getObjectValue("CASE_PERSON_MAP").get("Perpetrator1")[1],testCaseDataSd.get("SELECT_PARTICIPANT").get(0)),testCaseDataSd.get("SELECT_PARTICIPANT").get(0),action);	  	
+		Webkeywords.instance().click(driver, genericLocators.button(driver, "Save",testCaseDataSd.get("SAVE_BTN").get(0)),testCaseDataSd.get("SAVE_BTN").get(0),action);
+		Webkeywords.instance().pause();
+	
+	}
+	
+	public void verifyHeaderColumnsInParticipantsForWorkItem (String scriptIteration, String pomIteration) {
+		PageDetails action = new PageDetails();
+		action.setPageActionName("verifying Current Case Assignments Fields");
+		action.setPageActionDescription("verifying Current Case Assignments Fields");
+		
+		Map<String, ArrayList<String>>	testCaseDataSd = util.getScreenTCData(screenName, testCaseParam.getTestNGTestMethodName(),TestRunSettings.getTestDataPath(),
+					TestRunSettings.getTestDataMappingFileName() ,TestRunSettings.getTestDataMappingSheetNameSd(),scriptIteration,pomIteration);
+		
+		Webkeywords.instance().verifyElementDisplayed(driver, getElementBasedOnFlag(testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_ID_VERIFY_WORKITEM").get(0),columnHeader,"Court Work Item Participant","Court Work Item Participant: Court Work Item Participant ID"), testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_ID_VERIFY_WORKITEM").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, getElementBasedOnFlag(testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_PARTICIPANT_VERIFY_WORKITEM").get(0),columnHeader,"Court Work Item Participant","Court Work Item Participant: Participant"), testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_PARTICIPANT_VERIFY_WORKITEM").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, getElementBasedOnFlag(testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_ROLE_VERIFY_WORKITEM").get(0),columnHeader,"Court Work Item Participant","Court Work Item Participant: Role"), testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_ROLE_VERIFY_WORKITEM").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, getElementBasedOnFlag(testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_DOB_VERIFY_WORKITEM").get(0),columnHeader,"Court Work Item Participant","Court Work Item Participant: Date of Birth"), testCaseDataSd.get("COURT_WORKITEM_PARTICIPANT_DOB_VERIFY_WORKITEM").get(0), action);
+	}
+
+	
+	public WebElement getElementBasedOnFlag(String flag, String columnHeaderXpath, String tableName, String columnName) {
+		if(!(flag.equalsIgnoreCase("n/a"))) {
+			return driver.findElement(By.xpath(format(columnHeaderXpath,tableName,columnName)));
+		}
+		else
+			return null;
+	}
+	
+
+	
+	public void validatePetitionParticipantDetailsPage(String scriptIteration, String pomIteration)  {
+		PageDetails action = new PageDetails();
+		action.setPageActionName("Validate Petition Participant Details Page");
+		action.setPageActionDescription("Validate Petition Participant Details Page");
+		
+		Map<String, ArrayList<String>>	testCaseDataSd = util.getScreenTCData(screenName, testCaseParam.getTestNGTestMethodName(),TestRunSettings.getTestDataPath(), TestRunSettings.getTestDataMappingFileName() ,TestRunSettings.getTestDataMappingSheetNameSd(),scriptIteration,pomIteration);
+		
+		
+		Webkeywords.instance().verifyElementDisplayed(driver, genericLocators.textbox(driver, "Role", testCaseDataSd.get("ROLE_VERIFY").get(0)), testCaseDataSd.get("MIDDLE_NAME_VERIFY").get(0), action);
+		
+		Webkeywords.instance().verifyElementDisplayed(driver, genericLocators.textOnPage(driver, "Participant", testCaseDataSd.get("PARTICIPANT_VERIFY").get(0)) , testCaseDataSd.get("PARTICIPANT_VERIFY").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, genericLocators.textOnPage(driver, "Hearing Attendance", testCaseDataSd.get("PARTICIPANT_VERIFY").get(0)) , testCaseDataSd.get("PARTICIPANT_VERIFY").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, genericLocators.textOnPage(driver, "Court Work Item ID", testCaseDataSd.get("WORK_ITEM_ID_VERIFY").get(0)) , testCaseDataSd.get("WORK_ITEM_ID_VERIFY").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, genericLocators.textOnPage(driver, "Person Involved", testCaseDataSd.get("PERSON_INVOLVED").get(0)) , testCaseDataSd.get("PERSON_INVOLVED").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, genericLocators.textOnPage(driver, "Created By", testCaseDataSd.get("CREATED_BY_VERIFY").get(0)) , testCaseDataSd.get("CREATED_BY_VERIFY").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, genericLocators.textOnPage(driver, "Modified By", testCaseDataSd.get("MODIFIED_BY_VERIFY").get(0)) , testCaseDataSd.get("MODIFIED_BY_VERIFY").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, courtWorkItemId, testCaseDataSd.get("BIRTHDATE_VERIFY").get(0), action);
+		Webkeywords.instance().verifyElementDisplayed(driver, personInvolvedId, testCaseDataSd.get("BIRTHDATE_VERIFY").get(0), action);
+
+		
+		Webkeywords.instance().verifyElementDisplayed(driver, genericLocators.dropdown(driver,"Attendance Type",testCaseDataSd.get("ATTENDANCE_TYPE_VERIFY").get(0)),testCaseDataSd.get("ATTENDANCE_TYPE_VERIFY").get(0),action);
+		
+		
+	}
+	
+	public void addPickParticipantForPetitionRecord(String scriptIteration, String pomIteration){
+
+		PageDetails action = new PageDetails();
+		action.setPageActionName("Click Pick Participant");
+		action.setPageActionDescription("Click Pick Participant");
+
+		Map<String, ArrayList<String>>	testCaseDataSd = util.getScreenTCData(screenName, testCaseParam.getTestNGTestMethodName(),TestRunSettings.getTestDataPath(), TestRunSettings.getTestDataMappingFileName() ,TestRunSettings.getTestDataMappingSheetNameSd(),scriptIteration,pomIteration);
+	
+		Webkeywords.instance().click(driver, genericLocators.button(driver, "Pick Participants", testCaseDataSd.get("PICK_PARTICIPANT_BTN").get(0)), testCaseDataSd.get("PICK_PARTICIPANT_BTN").get(0),action);
+		Webkeywords.instance().pause();
+	
+		Webkeywords.instance().jsClick(driver, participantaccordian, testCaseDataSd.get("SELECT_PARTICIPANT").get(0),action);
+		Webkeywords.instance().pauseDelay();
+		Webkeywords.instance().click(driver, selectParticipants, testCaseDataSd.get("SELECT_PARTICIPANT").get(0),action);		
+		Webkeywords.instance().pauseDelay();
+		Webkeywords.instance().click(driver, genericLocators.link(driver, SalesforceConstants.getObjectValue("CASE_PERSON_MAP").get("Perpetrator1")[1],testCaseDataSd.get("SELECT_PARTICIPANT").get(0)),testCaseDataSd.get("SELECT_PARTICIPANT").get(0),action);	  	
+		Webkeywords.instance().click(driver, genericLocators.button(driver, "Save",testCaseDataSd.get("SAVE_BTN").get(0)),testCaseDataSd.get("SAVE_BTN").get(0),action);
+		
+	
+	}
+
+}
