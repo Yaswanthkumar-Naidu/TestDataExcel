@@ -1,0 +1,82 @@
+package uitests.testng.milestone3;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Properties;
+
+import cares.cwds.salesforce.constants.SalesforceConstants;
+
+public class TestClass {
+	
+	public static void main(String [] args) {
+		String filePath = "C:\\CARES\\28Jan2025\\CARES---Selenium-Automation-master (18)\\CARES---Selenium-Automation-master\\src\\main\\java\\uitests\\testng\\data.properties";
+		
+		//testData(filePath);
+		//readPropertiesToMap(filePath);
+	}
+	
+	
+	public static boolean testData(String filePath) {
+
+		SalesforceConstants.setConstantValue("SCR_ID1","AA1");
+		SalesforceConstants.setConstantValue("SCR_ID2","BB2");
+		SalesforceConstants.setConstantValue("SCR_ID3","CC3");
+		SalesforceConstants.setConstantValue("SCR_ID4","DD4");
+		SalesforceConstants.setConstantValue("SCR_ID5","EE5");
+
+		Properties properties = new Properties();
+		for (Map.Entry<String, String> entry : SalesforceConstants.salesforceMap.entrySet()) {
+			String key = entry.getKey();
+			String value = entry.getValue();
+
+			if (value == null) {
+				value = "";
+			}
+
+			properties.setProperty(key, value);
+		}
+		clearPropertiesFile(filePath);
+		try (java.io.OutputStream outputStream = new java.io.FileOutputStream(filePath)) {
+			properties.store(outputStream, "Salesforce Data");
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public static Map<String, String> readPropertiesToMap(String filePath) {
+		Properties properties = new Properties();
+
+		try (java.io.InputStream inputStream = new java.io.FileInputStream(filePath)) {
+			properties.load(inputStream);
+
+			for (String key : properties.stringPropertyNames()) {
+				String value = properties.getProperty(key);
+				SalesforceConstants.salesforceMap.put(key, value);
+			}
+
+			return  SalesforceConstants.salesforceMap;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return  SalesforceConstants.salesforceMap;
+		}
+	}
+	   
+	public static boolean clearPropertiesFile(String filePath) {
+		try {
+			File file = new File(filePath);
+			if (!file.exists()) {
+				return false;  
+			}
+			try (java.io.FileOutputStream fos = new java.io.FileOutputStream(file)) {}
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+
+}
