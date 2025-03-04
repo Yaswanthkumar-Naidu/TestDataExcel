@@ -1,4 +1,60 @@
-	public void jsClick(WebDriver drivernew, WebElement element, String testData, PageDetails pageDetails) {
+public void jsClick(WebDriver drivernew, WebElement element, String testData, PageDetails pageDetails) {
+    if ((testData.equalsIgnoreCase("n/a")) && !(testData.equalsIgnoreCase("n\\a"))
+            && !(testData.equalsIgnoreCase(TESTDATA_NOT_APPLICABLE))) {
+        return;
+    }
+	
+    String action = NAVIGATE;
+    String actionDescription = "";
+    LocalDateTime startTime = LocalDateTime.now();
+    WebDriverWait wait = new WebDriverWait(drivernew, TIME_OUT);
+    JavascriptExecutor js = (JavascriptExecutor) drivernew;
+    
+    int maxRetries = 3;
+    int retryCount = 0;
+    boolean clickSuccessful = false;
+    Exception lastException = null;
+    
+    while (retryCount < maxRetries && !clickSuccessful) {
+        try {
+            if (element.toString().contains("Save") || element.toString().contains("SAVE")) {
+                zoomWebPage(drivernew, "50%", pageDetails);
+                Webkeywords.instance().pause();
+            }
+            
+            js.executeScript("arguments[0].click();", element);
+            
+            if (element.toString().contains("Save") || element.toString().contains("SAVE")) {
+                zoomWebPage(drivernew, "90%", pageDetails);
+            }
+            
+            waitTillPageLoad(wait);
+            clickSuccessful = true;
+        } catch (Exception e) {
+            lastException = e;
+            retryCount++;
+            
+            if (retryCount < maxRetries) {
+                try {
+                    Thread.sleep(1000); // 1 second delay
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
+    }
+    
+    if (clickSuccessful) {
+        testStepDetails.logTestStepDetails(drivernew, action, actionDescription, pageDetails, startTime,
+                STATUSDONE);
+    } 
+}
+
+
+
+
+=============================================
+public void jsClick(WebDriver drivernew, WebElement element, String testData, PageDetails pageDetails) {
 
 		if ((testData.equalsIgnoreCase("n/a")) && !(testData.equalsIgnoreCase("n\\a"))
 				&& !(testData.equalsIgnoreCase(TESTDATA_NOT_APPLICABLE))) {
