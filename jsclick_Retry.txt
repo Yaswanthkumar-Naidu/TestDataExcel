@@ -1,3 +1,432 @@
+
+	public void clickwithaction(WebDriver drivernew, WebElement element, PageDetails pageDetails, String testData)
+        throws InterruptedException {
+    String action = "";
+    String actionDescription = "";
+    LocalDateTime startTime = LocalDateTime.now();
+    
+    if (!(testData.equalsIgnoreCase("n/a")) || !(testData.equalsIgnoreCase("n\\a"))
+            || !(testData.equalsIgnoreCase(TESTDATA_NOT_APPLICABLE))) {
+        
+        action = CLICK_ACTION_PREFIX + getLocatorFromWebElement(element, drivernew);
+        actionDescription = CLICK_ACTION_PREFIX + getLocatorFromWebElement(element, drivernew);
+        
+        int maxRetries = 3;
+        boolean success = false;
+        Exception lastException = null;
+        
+        for (int attempt = 1; attempt <= maxRetries && !success; attempt++) {
+            try {
+                logger.info("Attempt {} of {}: {}", attempt, maxRetries, actionDescription);
+                
+                // Wait for element to be present and clickable
+                Webkeywords.instance().fluentWait(drivernew, element);
+                Webkeywords.instance().waitElementforelementclickable(drivernew, element, 10); // Changed timeout to seconds
+                
+                // Scroll element into view
+                scrollIntoViewElement(drivernew, element);
+                
+                // Perform the click action
+                tryAction(drivernew, element, pageDetails, action, actionDescription, startTime);
+                
+                // If we reach here, the action was successful
+                success = true;
+                logger.info("Successfully performed action on attempt {}: {}", attempt, actionDescription);
+                
+            } catch (Exception e) {
+                lastException = e;
+                logger.warn("Attempt {} failed: {} - {}", attempt, actionDescription, e.getMessage());
+                
+                if (attempt < maxRetries) {
+                    // Wait before retrying (with increasing delay)
+                    int waitTime = 1000 * attempt; // 1s, 2s, 3s
+                    logger.info("Waiting {}ms before retry...", waitTime);
+                    Thread.sleep(waitTime);
+                }
+            }
+        }
+        
+        // If all attempts failed, log the error and rethrow the last exception
+        if (!success && lastException != null) {
+            logger.error(LOG_FAILED_FORMAT, action, actionDescription);
+            logger.error("Failed after {} attempts", maxRetries, lastException);
+            
+            if (lastException instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+                throw (InterruptedException) lastException;
+            } else {
+                throw new RuntimeException("Failed to perform click action after " + maxRetries + " attempts", lastException);
+            }
+        }
+    }
+}
+====================================================
+public void setDateText(WebDriver drivernew, WebElement element1, String text1, PageDetails pageDetails) {
+    String action = ENTERED_TEXT + text1;
+    String actionDescription = ENTERED_TEXT + text1;
+    LocalDateTime startTime = LocalDateTime.now();
+
+    if (!textCheck(text1)) {
+        // Implement retry logic with 3 attempts
+        int maxRetries = 3;
+        boolean success = false;
+        Exception lastException = null;
+        
+        for (int attempt = 1; attempt <= maxRetries && !success; attempt++) {
+            try {
+                logger.info("Attempt {} of {}: Setting date text '{}'", attempt, maxRetries, text1);
+                
+                // Wait for element to be present and clickable
+                Webkeywords.instance().fluentWait(drivernew, element1);
+                WebDriverWait wait1 = new WebDriverWait(drivernew, 10); // Changed to seconds instead of milliseconds
+                wait1.until(ExpectedConditions.elementToBeClickable(element1));
+                
+                // Clear and enter text
+                element1.clear();
+                element1.sendKeys(text1);
+                
+                // Verify text was entered correctly (optional validation)
+                String actualValue = element1.getAttribute("value");
+                if (actualValue != null && actualValue.contains(text1)) {
+                    success = true;
+                    logger.info(SUCCESSFULLY_ENTERED_TEXT, text1, element1);
+                } else {
+                    throw new RuntimeException("Text verification failed. Expected: " + text1 + ", Actual: " + actualValue);
+                }
+                
+            } catch (Exception e) {
+                lastException = e;
+                logger.warn("Attempt {} failed: {} - {}", attempt, actionDescription, e.getMessage());
+                
+                if (attempt < maxRetries) {
+                    // Wait before retrying (with increasing delay)
+                    try {
+                        int waitTime = 1000 * attempt; // 1s, 2s, 3s
+                        logger.info("Waiting {}ms before retry...", waitTime);
+                        Thread.sleep(waitTime);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        throw new RuntimeException("Thread interrupted during retry wait", ie);
+                    }
+                }
+            }
+        }
+        
+        // If all attempts failed, log the error and throw an exception
+        if (!success && lastException != null) {
+            logger.error("Failed to set date text '{}' after {} attempts", text1, maxRetries);
+            testStepDetails.logTestStepDetails(drivernew, action, getActionDescription(action, actionDescription),
+                    pageDetails, startTime, "FAILED");
+            throw new RuntimeException("Failed to set date text after " + maxRetries + " attempts", lastException);
+        }
+    }
+    
+    // Log the test step details
+    testStepDetails.logTestStepDetails(drivernew, action, getActionDescription(action, actionDescription),
+            pageDetails, startTime, STATUSDONE);
+}
+======================================
+
+public void setTextwithoutverification(WebDriver drivernew, WebElement element, String text,
+        PageDetails pageDetails) throws InterruptedException {
+    String action = ENTERED_TEXT + text;
+    String actionDescription = ENTERED_TEXT + text;
+    LocalDateTime startTime = LocalDateTime.now();
+
+    if (!textCheck(text)) {
+        // Implement retry logic with 3 attempts
+        int maxRetries = 3;
+        boolean success = false;
+        Exception lastException = null;
+        
+        for (int attempt = 1; attempt <= maxRetries && !success; attempt++) {
+            try {
+                logger.info("Attempt {} of {}: Setting text '{}'", attempt, maxRetries, text);
+                
+                // Wait for element to be present and clickable
+                Webkeywords.instance().fluentWait(drivernew, element);
+                WebDriverWait wait = new WebDriverWait(drivernew, 10); // Changed to seconds instead of milliseconds
+                wait.until(ExpectedConditions.elementToBeClickable(element));
+                
+                // Clear and enter text
+                element.clear();
+                element.sendKeys(text);
+
+                // Verify text was entered correctly using the existing validation logic
+                boolean isDataFilled = false;
+                int maxValidationAttempts = 3;
+                int validationAttempt = 0;
+                
+                while (!isDataFilled && validationAttempt < maxValidationAttempts) {
+                    validationAttempt++;
+                    
+                    String textBoxValue = element.getAttribute(VALUE);
+                    String textBoxtest = element.getText();
+                    
+                    if (checktextboxExpression(textBoxValue, textBoxtest)) {
+                        isDataFilled = true;
+                    } else if (checkTestboxValue(textBoxValue, textBoxtest)) {
+                        isDataFilled = true;
+                    } else if (checktextboxtestExp(textBoxValue, textBoxtest)) {
+                        isDataFilled = true;
+                    } else if (textBoxValue.matches("^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@#$%^&+=/_-]).+$")
+                            || textBoxtest.matches("^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@#$%^&+=/_-]).+$")) {
+                        isDataFilled = true;
+                    } else if (textBoxValue.matches("^(?=.*\\d)(?=.*[@#$%^&+=/_-]).+$")
+                            || textBoxtest.matches("^(?=.*\\d)(?=.*[@#$%^&+=/_-]).+$")) {
+                        isDataFilled = true;
+                    } else if (checkTextBoxRegularExp(textBoxValue, textBoxtest)) {
+                        isDataFilled = true;
+                    } else {
+                        logger.info(EMPTYTEXTMSG);
+                        element.clear();
+
+                        // Try JavaScript approach as fallback
+                        JavascriptExecutor jsExecutor = (JavascriptExecutor) drivernew;
+                        jsExecutor.executeScript("arguments[0].value = arguments[1]", element, text);
+                        
+                        // Short wait to allow JS to take effect
+                        Thread.sleep(500);
+                    }
+                }
+                
+                if (isDataFilled) {
+                    success = true;
+                    logger.info(SUCCESSFULLY_ENTERED_TEXT, " {} to {}", text, element);
+                } else {
+                    throw new RuntimeException("Failed to fill data after " + maxValidationAttempts + " validation attempts");
+                }
+                
+            } catch (Exception e) {
+                lastException = e;
+                logger.warn("Attempt {} failed: {} - {}", attempt, actionDescription, e.getMessage());
+                
+                if (attempt < maxRetries) {
+                    // Wait before retrying (with increasing delay)
+                    int waitTime = 1000 * attempt; // 1s, 2s, 3s
+                    logger.info("Waiting {}ms before retry...", waitTime);
+                    Thread.sleep(waitTime);
+                }
+            }
+        }
+        
+        // If all attempts failed, log the error and throw an exception
+        if (!success) {
+            logger.error("Failed to set text '{}' after {} attempts", text, maxRetries);
+            testStepDetails.logTestStepDetails(drivernew, action, actionDescription,
+                    pageDetails, startTime, "FAILED");
+            
+            if (lastException != null) {
+                throw new RuntimeException("Failed to set text after " + maxRetries + " attempts", lastException);
+            } else {
+                throw new RuntimeException("Failed to set text after " + maxRetries + " attempts");
+            }
+        }
+        
+        // Log the test step details for successful operation
+        testStepDetails.logTestStepDetails(drivernew, action, actionDescription, pageDetails, startTime,
+                STATUSDONE);
+    }
+}
+=====================================
+
+public static void clickAction(WebDriver driver, WebElement element, boolean useAction) {
+    if (Objects.isNull(element)) {
+        throw new NullPointerException(
+                "Exception occurred while clicking element: " + element + " web element not found");
+    }
+
+    int maxRetries = 3;
+    boolean success = false;
+    Exception lastException = null;
+
+    for (int attempt = 1; attempt <= maxRetries && !success; attempt++) {
+        try {
+            // Log the current attempt
+            Logger logger = LoggerFactory.getLogger(ClassName.class); // Replace ClassName with your actual class
+            logger.info("Attempt {} of {}: Clicking element", attempt, maxRetries);
+            
+            // Strategy 1: Direct click
+            if (element.isEnabled()) {
+                element.click();
+                success = true;
+                logger.info("Successfully clicked element using direct click");
+            } else {
+                throw new ElementNotInteractableException("Element is not enabled");
+            }
+
+        } catch (Exception e) {
+            try {
+                // Strategy 2: Actions click if enabled
+                if (useAction) {
+                    logger.info("Direct click failed, trying Actions click");
+                    Actions actions = new Actions(driver);
+                    actions.moveToElement(element).perform();
+                    element.click();
+                    success = true;
+                    logger.info("Successfully clicked element using Actions");
+                } else {
+                    throw new JavascriptException("Action class not used.");
+                }
+            } catch (Exception exp) {
+                try {
+                    // Strategy 3: JavaScript click
+                    logger.info("Actions click failed, trying JavaScript click");
+                    JavascriptExecutor executor = (JavascriptExecutor) driver;
+                    executor.executeScript("arguments[0].click()", element);
+                    success = true;
+                    logger.info("Successfully clicked element using JavaScript");
+                } catch (Exception jsExp) {
+                    // Store the last exception for potential retries
+                    lastException = jsExp;
+                    logger.warn("Attempt {} failed with all click strategies: {}", attempt, jsExp.getMessage());
+                    
+                    // Only wait and retry if we have more attempts left
+                    if (attempt < maxRetries) {
+                        try {
+                            // Exponential backoff: 1s, 2s, 4s
+                            int waitTime = (int) Math.pow(2, attempt - 1) * 1000;
+                            logger.info("Waiting {}ms before retry...", waitTime);
+                            Thread.sleep(waitTime);
+                        } catch (InterruptedException ie) {
+                            Thread.currentThread().interrupt();
+                            throw new RuntimeException("Thread interrupted during retry wait", ie);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // If all attempts failed, throw an exception with details
+    if (!success) {
+        String errorMessage = "Failed to click element after " + maxRetries + " attempts using all available strategies";
+        Logger logger = LoggerFactory.getLogger(ClassName.class); // Replace ClassName with your actual class
+        logger.error(errorMessage);
+        
+        if (lastException != null) {
+            throw new RuntimeException(errorMessage, lastException);
+        } else {
+            throw new RuntimeException(errorMessage);
+        }
+    }
+}
+
+=========================================
+public void verifyElementDisplayed(WebDriver drivernew, WebElement element, String testdata,
+        PageDetails pageDetails) {
+    if (!(testdata.equalsIgnoreCase("n/a")) && !(testdata.equalsIgnoreCase("n\\a"))
+            && !(testdata.equalsIgnoreCase(TESTDATA_NOT_APPLICABLE))) {
+
+        String actionv1 = "";
+        String actionDescription = "";
+        LocalDateTime startTime = LocalDateTime.now();
+
+        try {
+            actionv1 = VRIFYELEMENT + element.getAttribute(VALUE);
+            actionDescription = VRIFYELEMENT + element.getAttribute(VALUE);
+
+            scrollIntoViewElement(drivernew, element);
+            Actions action = new Actions(drivernew);
+            action.moveToElement(element).perform();
+            
+            if (element.isDisplayed()) {
+                testStepDetails.logTestStepDetails(drivernew, actionv1, actionDescription, pageDetails, startTime,
+                        "Pass");
+            } else {
+                testStepDetails.logTestStepDetails(drivernew, actionv1, actionDescription, pageDetails, startTime,
+                        STATUSFAIL);
+            }
+        } catch (Exception e) {
+            logger.error("Error verifying element: {}", e.getMessage());
+            testStepDetails.logTestStepDetails(drivernew, 
+                    VRIFYELEMENT + "element", 
+                    VRIFYELEMENT + "element (Error: " + e.getMessage() + ")", 
+                    pageDetails, startTime, STATUSFAIL);
+        }
+    }
+}
+
+===================================
+
+public void setText(WebDriver drivernew, WebElement element1, String text1, PageDetails pageDetails) {
+    if (!(text1.equalsIgnoreCase("n/a")) && !(text1.equalsIgnoreCase("n\\a"))
+            && !(text1.equalsIgnoreCase(TESTDATA_NOT_APPLICABLE))) {
+        String action = ENTERED_TEXT + text1;
+        String actionDescription = ENTERED_TEXT + text1;
+        String password = "*".repeat(text1.length());
+        LocalDateTime startTime = LocalDateTime.now();
+
+        int maxRetries = TestRunSettings.getRetryAttempts();
+        int retryCount = 0;
+        boolean success = false;
+
+        while (!success && retryCount < maxRetries) {
+            try {
+                if (!textCheck(text1)) {
+                    Webkeywords.instance().fluentWait(drivernew, element1);
+                    WebDriverWait wait1 = new WebDriverWait(drivernew, 10); // Changed to seconds
+                    wait1.until(ExpectedConditions.elementToBeClickable(element1));
+                    
+                    // First attempt: Standard Selenium approach
+                    try {
+                        element1.clear();
+                        element1.sendKeys(text1);
+                    } catch (Exception e) {
+                        logger.warn("Standard text entry failed, trying JavaScript approach. Error: {}", e.getMessage());
+                        
+                        // JavaScript fallback approach
+                        JavascriptExecutor jsExecutor = (JavascriptExecutor) drivernew;
+                        
+                        // Clear the field using JavaScript
+                        jsExecutor.executeScript("arguments[0].value = '';", element1);
+                        
+                        // Set the value using JavaScript
+                        jsExecutor.executeScript("arguments[0].value = arguments[1];", element1, text1);
+                        
+                        // Trigger change event to ensure the value is registered
+                        jsExecutor.executeScript(
+                            "if(document.createEvent) {" +
+                            "  var event = document.createEvent('HTMLEvents');" +
+                            "  event.initEvent('change', true, true);" +
+                            "  arguments[0].dispatchEvent(event);" +
+                            "} else {" +
+                            "  arguments[0].fireEvent('onchange');" +
+                            "}", element1);
+                    }
+                    
+                    // Verify the text was entered correctly
+                    String actualValue = element1.getAttribute("value");
+                    if (actualValue == null || !actualValue.equals(text1)) {
+                        logger.warn("Text verification failed. Expected: '{}', Actual: '{}'", text1, actualValue);
+                        throw new RuntimeException("Text verification failed");
+                    }
+
+                    success = logSetTextOnRport(element1, text1, pageDetails, action, actionDescription,
+                            password, startTime);
+                }
+            } catch (Exception e) {
+                logger.warn("Attempt {} failed. Retrying... Error: {}", retryCount + 1, e.getMessage());
+                pause();
+            }
+            retryCount++;
+        }
+        
+        // Log failure if all attempts failed
+        if (!success) {
+            logger.error("Failed to set text after {} attempts", maxRetries);
+            WebDriver driver = (WebDriver) Reporter.getCurrentTestResult().getTestContext().getAttribute("driver");
+            testStepDetails.logTestStepDetails(driver, action, 
+                    getActionDescription(action, actionDescription) + " (Failed after " + maxRetries + " attempts)", 
+                    pageDetails, startTime, "FAILED");
+        }
+    }
+}
+=============================
+
+
+
+=====================================
 public void jsClick(WebDriver drivernew, WebElement element, String testData, PageDetails pageDetails) {
     if ((testData.equalsIgnoreCase("n/a")) && !(testData.equalsIgnoreCase("n\\a"))
             && !(testData.equalsIgnoreCase(TESTDATA_NOT_APPLICABLE))) {
