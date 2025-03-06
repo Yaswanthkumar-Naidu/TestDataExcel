@@ -22,3 +22,25 @@
 	</classes>
 	</test>
 </suite> <!-- Suite -->
+
+=================
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Suite" parallel="tests" thread-count="1">
+    <test name="T4149">
+        <parameter name="scriptIteration" value="1"/>
+        <parameter name="PreReq" value="yes"/>
+        <method-selectors>
+            <method-selector>
+                <script language="beanshell">
+                    <![CDATA[
+                        method.getParameterTypes().length == 2
+                    ]]>
+                </script>
+            </method-selector>
+        </method-selectors>
+        <classes>
+            <class name="uitests.testng.milestone15.T4149"/>
+        </classes>
+    </test>
+</suite>
+
