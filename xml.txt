@@ -1,0 +1,24 @@
+	@Test
+	@Parameters({"scriptIteration","PreReq"})
+	public void testT4149(String scriptIteration, String PreReq) throws AWTException, InterruptedException{
+
+	@Test (dataProvider = "data-provider")
+	public void testT4149(String scriptIteration) throws AWTException, InterruptedException{
+
+==========================
+
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Suite" parallel="tests" thread-count="1">
+
+	<test name="T4149">
+		<parameter name="scriptIteration" value="1"/>
+		<parameter name="PreReq" value="yes"/>
+    <classes>
+      <class name="uitests.testng.milestone15.T4149">
+      <methods>
+      	<include name="testT4149" />
+			</methods>
+	  </class>
+	</classes>
+	</test>
+</suite> <!-- Suite -->
