@@ -1,4 +1,9 @@
-	@Test
+ <exclude name="testT4149.*" />
+          <!-- Then include only the specific one we want -->
+          <include name="testT4149" description="testT4149(java.lang.String,java.lang.String)" />
+    
+=================
+@Test
 	@Parameters({"scriptIteration","PreReq"})
 	public void testT4149(String scriptIteration, String PreReq) throws AWTException, InterruptedException{
 
